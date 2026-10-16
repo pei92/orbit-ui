@@ -17,7 +17,11 @@
     border-radius: 50%;
     background: radial-gradient(circle at 50% 0%, #1a1630 0%, #07060d 18%, #020205 40%);
     box-shadow: 0 -2px 0 rgba(200,190,255,.55), 0 -20px 60px rgba(169,139,255,.35), 0 -80px 160px rgba(120,90,255,.18);
+    animation: dawn 2.4s var(--o-ease) both, breathe 10s ease-in-out 2.4s infinite;
   }
+  /* 晨光从地平线下升起，之后像大气一样缓慢呼吸 */
+  @keyframes dawn { from { top: 92vh; opacity: 0; } }
+  @keyframes breathe { 50% { box-shadow: 0 -2px 0 rgba(200,190,255,.7), 0 -26px 80px rgba(169,139,255,.45), 0 -100px 200px rgba(120,90,255,.24); } }
   .hero { position: relative; z-index: 1; height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding: 32px clamp(20px, 5vw, 64px); }
   nav { display: flex; justify-content: space-between; align-items: center; font: 500 15px/1 var(--o-font-display); }
   nav a { color: var(--o-text-dim); text-decoration: none; font-size: 14px; }
@@ -37,7 +41,7 @@
   <div class="limb" aria-hidden="true"></div>
   <div class="hero">
     <nav><span>星砚航天</span><a href="#">任务档案</a></nav>
-    <div class="center">
+    <div class="center o-stagger">
       <span class="eyebrow">10 月 18 日 02:14 UTC</span>
       <h1>十二颗星，<br><em>同一道晨光</em></h1>
       <p class="lede">XY-07 雁阵把 12 颗遥感卫星送进 550 公里的晨昏轨道。它们会永远沿着昼夜分界线飞行，每天拍下同一时刻的地球。</p>
@@ -46,8 +50,8 @@
         <a class="o-btn" href="#">发射前 10 分钟提醒我</a>
       </div>
     </div>
-    <div class="meta">
-      <span>距点火<b>01:42:17</b></span>
+    <div class="meta o-stagger">
+      <span>距点火<b id="t">01:42:17</b></span>
       <span>轨道高度<b>550 km</b></span>
       <span>载荷<b>12 颗</b></span>
     </div>
@@ -77,6 +81,9 @@
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches) requestAnimationFrame(draw);
   }
   addEventListener("resize", seed); seed(); requestAnimationFrame(draw);
+  let s = 1 * 3600 + 42 * 60 + 17;
+  const t = document.getElementById("t"), p = n => String(n).padStart(2, "0");
+  setInterval(() => { s = Math.max(0, s - 1); t.textContent = `${p(s / 3600 | 0)}:${p((s / 60 | 0) % 60)}:${p(s % 60)}`; }, 1000);
 </script>
 </body>
 </html>

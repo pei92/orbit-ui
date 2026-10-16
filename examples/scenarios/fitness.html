@@ -39,6 +39,13 @@
     .kpis > div:first-child, .kpis > div:last-child { grid-column: 1 / -1; }
     .main { grid-template-columns: 1fr; }
   }
+  /* 路线先画一遍，再有一个点沿着它重跑；心率曲线从左到右展开 */
+  .runner { offset-path: path("M 90 230 C 60 170 80 90 150 70 S 300 40 360 60 S 470 110 460 170 S 400 260 300 262 S 140 270 90 230 Z");
+    animation: run 14s linear 2.4s infinite, fade-in .4s ease 2.4s both; }
+  @keyframes run { to { offset-distance: 100%; } }
+  @keyframes fade-in { from { opacity: 0; } }
+  .marks { animation: fade-in .6s ease 1.6s both; }
+  .hr svg { animation: o-wipe 1.8s var(--o-ease) .3s both; }
 </style>
 </head>
 <body class="o-grid-bg">
@@ -48,8 +55,8 @@
     <span class="o-status o-status--nominal">本周目标 30 km · 已完成 24.6</span>
   </header>
 
-  <div class="kpis">
-    <div><span class="o-label">距离</span><div class="big">10.24<small>km</small></div></div>
+  <div class="kpis o-stagger">
+    <div><span class="o-label">距离</span><div class="big"><span id="dist">10.24</span><small>km</small></div></div>
     <div><span class="o-label">用时</span><b>53:18</b></div>
     <div><span class="o-label">平均配速</span><b>5'12"<small>/km</small></b></div>
     <div><span class="o-label">平均心率</span><b>152<small>bpm</small></b></div>
@@ -59,15 +66,16 @@
     <section class="route">
       <h2><span>路线</span><span>累计爬升 38 m</span></h2>
       <svg viewBox="0 0 520 300" aria-label="跑步路线，起点断桥，终点同一位置">
-        <path d="M 90 230 C 60 170 80 90 150 70 S 300 40 360 60 S 470 110 460 170 S 400 260 300 262 S 140 270 90 230 Z" fill="none" stroke="var(--o-accent)" stroke-width="2" stroke-linejoin="round"/>
+        <path class="o-draw" pathLength="1" style="--d:.2s;--t:2.2s" d="M 90 230 C 60 170 80 90 150 70 S 300 40 360 60 S 470 110 460 170 S 400 260 300 262 S 140 270 90 230 Z" fill="none" stroke="var(--o-accent)" stroke-width="2" stroke-linejoin="round"/>
         <path d="M 30 150 C 160 140 330 150 500 130" fill="none" stroke="var(--o-line)" stroke-width="6"/>
-        <g fill="var(--o-bg)" stroke="var(--o-accent)" stroke-width="1.5">
+        <g class="marks" fill="var(--o-bg)" stroke="var(--o-accent)" stroke-width="1.5">
           <circle cx="150" cy="70" r="4"/><circle cx="360" cy="60" r="4"/><circle cx="460" cy="170" r="4"/><circle cx="300" cy="262" r="4"/>
         </g>
         <circle cx="90" cy="230" r="7" fill="var(--o-accent)"/>
-        <text x="150" y="56" text-anchor="middle">2 km</text><text x="360" y="46" text-anchor="middle">4 km</text>
+        <circle class="runner" r="4" fill="var(--o-text)" style="filter:drop-shadow(0 0 6px var(--o-accent))"/>
+        <g class="marks"><text x="150" y="56" text-anchor="middle">2 km</text><text x="360" y="46" text-anchor="middle">4 km</text>
         <text x="474" y="174">6 km</text><text x="300" y="284" text-anchor="middle">8 km</text>
-        <text x="104" y="250">起点 / 终点 · 断桥</text>
+        <text x="104" y="250">起点 / 终点 · 断桥</text></g>
       </svg>
     </section>
     <section class="hr">
@@ -78,10 +86,10 @@
           points="0,96 20,80 40,66 60,58 80,56 100,54 120,52 140,55 160,50 180,48 200,47 220,49 240,44 260,42 280,38 300,30 320,22 340,26 360,34 380,40 400,44"/>
       </svg>
       <div class="zones">
-        <div><span>Z2 有氧</span><div class="o-gauge" style="--v:18"></div><span>9:36</span></div>
-        <div><span>Z3 节奏</span><div class="o-gauge" style="--v:52"></div><span>27:42</span></div>
-        <div><span>Z4 乳酸阈</span><div class="o-gauge" style="--v:26"></div><span>13:51</span></div>
-        <div><span>Z5 最大</span><div class="o-gauge" style="--v:4"></div><span>2:09</span></div>
+        <div><span>Z2 有氧</span><div class="o-gauge" style="--v:18;--i:4"></div><span>9:36</span></div>
+        <div><span>Z3 节奏</span><div class="o-gauge" style="--v:52;--i:5"></div><span>27:42</span></div>
+        <div><span>Z4 乳酸阈</span><div class="o-gauge" style="--v:26;--i:6"></div><span>13:51</span></div>
+        <div><span>Z5 最大</span><div class="o-gauge" style="--v:4;--i:7"></div><span>2:09</span></div>
       </div>
     </section>
   </div>
@@ -90,7 +98,7 @@
     <h2><span>分段</span><span>最快一公里 4'48"</span></h2>
     <table class="o-table">
       <thead><tr><th>公里</th><th class="num">配速</th><th class="num">心率</th><th class="num">步频</th><th class="num">爬升</th></tr></thead>
-      <tbody>
+      <tbody class="o-stagger">
         <tr><td>1</td><td class="num">5'31"</td><td class="num">134</td><td class="num">172</td><td class="num">+2 m</td></tr>
         <tr><td>2</td><td class="num">5'18"</td><td class="num">146</td><td class="num">176</td><td class="num">+6 m</td></tr>
         <tr><td>3</td><td class="num">5'14"</td><td class="num">150</td><td class="num">177</td><td class="num">+11 m</td></tr>
@@ -101,5 +109,15 @@
     </table>
   </section>
 </div></div>
+<script>
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const countUp = (el, to, fmt, ms = 1200) => {
+    if (still) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    const step = now => { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(to * e); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  countUp(document.getElementById("dist"), 10.24, v => v.toFixed(2), 1600);
+</script>
 </body>
 </html>

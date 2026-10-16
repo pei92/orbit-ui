@@ -6,6 +6,32 @@ For aerospace sites, launch livestream pages, satellite data platforms, ops dash
 
 [中文](README.md)
 
+<p align="center"><img src="docs/screenshots/line-drawing.gif" width="860" alt="Product page: the headphone line drawing is traced stroke by stroke, then dimensions and callouts appear"></p>
+
+## Gallery
+
+One launch, four directions:
+
+| Frontier | Mission Control |
+| --- | --- |
+| ![Frontier launch page](docs/screenshots/frontier.png) | ![Mission Control launch page](docs/screenshots/mission.png) |
+| **Orbital Blueprint** | **Deepfield** |
+| ![Orbital Blueprint launch page](docs/screenshots/blueprint.png) | ![Deepfield launch page](docs/screenshots/deepfield.png) |
+
+Everyday products:
+
+| Food delivery tracking | Smart home | Personal wallet |
+| --- | --- | --- |
+| ![Food delivery tracking](docs/screenshots/delivery.png) | ![Smart home](docs/screenshots/smart-home.png) | ![Personal wallet](docs/screenshots/wallet.png) |
+| **Product page** | **Run log** | **Store ops dashboard** |
+| ![Product page](docs/screenshots/product.png) | ![Run log](docs/screenshots/fitness.png) | ![Store ops dashboard](docs/screenshots/admin.png) |
+
+All controls, switchable across the four palettes:
+
+![Components](docs/screenshots/components.png)
+
+Motion is kept quiet: callouts and orbits are traced in, gauges read up from zero, countdowns and revenue tick, status lights breathe. Open the pages in `examples/` locally to see it.
+
 ## Principles
 
 - **Instrument honesty**: every line measures something, every glow comes from a real signal; at most two decorative languages per page.

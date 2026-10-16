@@ -45,6 +45,13 @@
   .tag b { font: 500 13px/1.3 var(--o-font-body); }
   .tag span { font: 500 12px/1.3 var(--o-font-mono); color: var(--o-text-dim); }
 
+  /* 星球慢慢浮动；轨道上的亮段绕着走；标注在引线画完后才亮起 */
+  .world { animation: o-float 18s ease-in-out infinite; }
+  .glint { animation: glint 9s linear infinite; }
+  @keyframes glint { from { stroke-dashoffset: 12; } to { stroke-dashoffset: -100; } }
+  .tag { animation: tag-in .6s var(--o-ease) both; }
+  @keyframes tag-in { from { opacity: 0; } }
+
   /* ---- 顶栏 ---- */
   .top { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px clamp(20px, 4vw, 56px); }
   .brand { display: grid; gap: 8px; }
@@ -101,9 +108,9 @@
           <!-- 轨道后半圈被星球挡住，前半圈压在星球上；亮段只有一处 -->
           <path d="M -22 50 A 72 20 0 0 1 122 50" stroke="rgba(236,234,226,.35)" stroke-width="1" vector-effect="non-scaling-stroke" transform="rotate(-14 50 50)" mask="url(#behind)"/>
           <path d="M -22 50 A 72 20 0 0 0 122 50" stroke="rgba(236,234,226,.4)" stroke-width="1" vector-effect="non-scaling-stroke" transform="rotate(-14 50 50)"/>
-          <path d="M -22 50 A 72 20 0 0 0 122 50" stroke="rgba(236,234,226,.95)" stroke-width=".3" stroke-linecap="round" transform="rotate(-14 50 50)" pathLength="100" stroke-dasharray="12 200"/>
-          <polyline points="-19.86,67.42 -19.86,80 12,80" stroke="rgba(236,234,226,.75)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-          <polyline points="58,26 58,12 46,12" stroke="rgba(236,234,226,.75)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+          <path d="M -22 50 A 72 20 0 0 0 122 50" stroke="rgba(236,234,226,.95)" stroke-width=".3" stroke-linecap="round" transform="rotate(-14 50 50)" pathLength="100" stroke-dasharray="12 200" class="glint"/>
+          <polyline class="o-draw" pathLength="1" style="--d:.5s;--t:.9s" points="-19.86,67.42 -19.86,80 12,80" stroke="rgba(236,234,226,.75)" stroke-width=".16"/>
+          <polyline class="o-draw" pathLength="1" style="--d:.8s;--t:.9s" points="58,26 58,12 46,12" stroke="rgba(236,234,226,.75)" stroke-width=".16"/>
         </g>
         <!-- 锚点画在线之后、实心填充：线从圆心出发，被圆盖住，任何尺寸下都对齐 -->
         <g fill="#0b0d10" stroke="rgba(236,234,226,.9)" stroke-width="1.2">
@@ -111,8 +118,8 @@
           <circle cx="58" cy="26" r=".8" vector-effect="non-scaling-stroke"/>
         </g>
       </svg>
-      <div class="tag" style="left:12%;top:80%"><b>目标轨道 · 550 km</b><span>太阳同步 · 倾角 97.6°</span></div>
-      <div class="tag" style="right:54%;top:12%"><b>晨昏线</b><span>卫星将一直沿它飞行</span></div>
+      <div class="tag" style="left:12%;top:80%;animation-delay:1.3s"><b>目标轨道 · 550 km</b><span>太阳同步 · 倾角 97.6°</span></div>
+      <div class="tag" style="right:54%;top:12%;animation-delay:1.6s"><b>晨昏线</b><span>卫星将一直沿它飞行</span></div>
     </div>
   </div>
 
@@ -130,7 +137,7 @@
     </div>
   </header>
 
-  <main class="main">
+  <main class="main o-stagger">
     <h1>十二颗星，<br><span class="nb">送往晨昏线</span></h1>
     <p class="lede">10 月 18 日 02:14 UTC，XY-07 雁阵把 12 颗遥感卫星送进 550 公里的太阳同步轨道。直播从 T−30 分钟开始。</p>
 
@@ -144,9 +151,9 @@
       <section class="o-panel" aria-labelledby="obj">
         <h2 id="obj"><span>发射前检查</span><span>3 / 5</span></h2>
         <ul class="o-objectives">
-          <li data-state="done">靶场安全确认<small>23:58</small></li>
-          <li data-state="done">高空风评估通过<small>00:12</small></li>
-          <li data-state="done">测控链路建立<small>238 ms</small></li>
+          <li data-state="done" style="--i:0">靶场安全确认<small>23:58</small></li>
+          <li data-state="done" style="--i:1">高空风评估通过<small>00:12</small></li>
+          <li data-state="done" style="--i:2">测控链路建立<small>238 ms</small></li>
           <li data-state="active">一级液氧补加<small>94.2%</small></li>
           <li>最终放行投票<small>T−00:15</small></li>
         </ul>

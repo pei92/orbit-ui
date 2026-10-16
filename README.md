@@ -6,6 +6,32 @@
 
 [English](README.en.md)
 
+<p align="center"><img src="docs/screenshots/line-drawing.gif" width="860" alt="商品详情页：耳机线稿一笔一笔画出，尺寸线和参数标注随后亮起"></p>
+
+## 看看效果
+
+同一次发射，四个方向：
+
+| 星际拓荒 · frontier | 任务控制台 · mission |
+| --- | --- |
+| ![星际拓荒方向的发射页](docs/screenshots/frontier.png) | ![任务控制台方向的发射页](docs/screenshots/mission.png) |
+| **轨道蓝图 · blueprint** | **深空 · deepfield** |
+| ![轨道蓝图方向的发射页](docs/screenshots/blueprint.png) | ![深空方向的发射页](docs/screenshots/deepfield.png) |
+
+日常业务界面：
+
+| 外卖订单追踪 | 智能家居 | 个人账户 |
+| --- | --- | --- |
+| ![外卖订单追踪](docs/screenshots/delivery.png) | ![智能家居](docs/screenshots/smart-home.png) | ![个人账户](docs/screenshots/wallet.png) |
+| **商品详情** | **跑步记录** | **门店运营看板** |
+| ![商品详情](docs/screenshots/product.png) | ![跑步记录](docs/screenshots/fitness.png) | ![门店运营看板](docs/screenshots/admin.png) |
+
+控件总览（可切换四套色板）：
+
+![控件总览](docs/screenshots/components.png)
+
+页面里的动效都很克制：引线和轨迹被一笔画出，刻度环从 0 读到当前值，倒计时和营业额在跳，状态灯在呼吸。截图看不出来，在本地打开 `examples/` 里的页面就能看到。
+
 ## 它怎么工作
 
 1. **认品类，拆标杆。** 先判断产品属于哪一类，找同类里风格最鲜明的两三家（SpaceX 直播、NASA Eyes、Planet、电影界面……），拆出看得见的要素。
@@ -46,7 +72,7 @@ orbit-ui/
 │  ├─ visual-review.md          10 分制评审清单
 │  └─ tools.md                  工具用法
 ├─ assets/
-│  ├─ orbit.css                 设计令牌 + 控件 + 线条原语（mission / blueprint / deepfield / frontier 四套色板）
+│  ├─ orbit.css                 设计令牌 + 控件 + 线条与动效原语（mission / blueprint / deepfield / frontier 四套色板）
 │  └─ style-explorer.html       对比页模板
 ├─ scripts/
 │  ├─ build_explorer.py         manifest → 离线单文件对比页（Python 标准库）
@@ -55,6 +81,7 @@ orbit-ui/
 │  ├─ components.html           控件总览，可切换四套色板（?orbit=frontier 直接打开）
 │  ├─ launch-page/              一轮完整示例：四个方向首屏 + manifest + 生成的对比页
 │  └─ scenarios/                日常业务：外卖追踪、智能家居、钱包、商品详情、跑步记录、门店看板（index.html 总览）
+├─ docs/screenshots/           README 里的截图
 └─ tests/
 ```
 

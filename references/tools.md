@@ -17,6 +17,10 @@
 | `.o-gauge`（`style="--v:62"`） | 刻度条 |
 | `.o-readout` / `.o-label` / `.o-mono` / `.o-display` | 读数、标签、等宽、展示字 |
 | `.o-boot`（`style="--i:2"`） | 上电进入动效 |
+| `.o-rise`（`--i`）/ `.o-stagger`（子元素依次） | 自下而上浮现 |
+| `.o-draw`（SVG 路径加 `pathLength="1"`，`--d` 延迟、`--t` 时长） | 描线：从起点画到终点 |
+| `.o-tick`（脚本加 `.is-tick`） | 读数变化时亮一下 |
+| `.o-float`（`--t`） | 主视觉慢速漂浮 |
 | `.o-stripe`（`--w`、`--h`） | 四色涂装条 |
 | `.o-rule` / `.o-rule--soft` | 带端点的分区线 |
 | `.o-arc`（`--v`、`--size`） | 刻度环，圆心放读数 |
@@ -28,6 +32,8 @@
 | `.o-table`（数字列加 `.num`） | 表格 |
 | `.o-track`（`data-state`） | 订单 / 物流 / 审批步骤轨迹 |
 | `.o-avatar` | 头像、首字图标位 |
+
+控件自带的动效不需要额外类：按钮悬停扫光、按下下沉；刻度条、刻度环从 0 读到目标值（改 `--v` 也会过渡）；状态灯呼吸；进行中的步骤向外发信号；开关落定带轻微回弹。`prefers-reduced-motion` 下全部关闭。
 
 组件总览页：[`examples/components.html`](../examples/components.html)。
 

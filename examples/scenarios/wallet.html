@@ -57,9 +57,9 @@
 <div class="wrap">
   <header><b>我的账户</b><a href="#">账户设置</a></header>
 
-  <section class="hero">
+  <section class="hero o-stagger">
     <span class="o-label">可用余额（元）</span>
-    <div class="balance"><small>¥</small>48,236<span class="cents">.57</span></div>
+    <div class="balance"><small>¥</small><span id="bal">48,236</span><span class="cents" id="cents">.57</span></div>
     <span class="delta">本月净流入 +¥ 6,412.80</span>
     <div class="quick">
       <button class="o-btn"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>转账</button>
@@ -69,7 +69,7 @@
     </div>
   </section>
 
-  <div class="cols">
+  <div class="cols o-stagger">
     <section class="o-panel">
       <div class="bar">
         <h2>最近交易</h2>
@@ -98,18 +98,30 @@
     <section class="o-panel budget">
       <h2>10 月预算</h2>
       <div class="o-arc" role="img" aria-label="本月已用预算 62%">
-        <div><b>¥ 4,962</b><span>已用 / ¥ 8,000</span></div>
+        <div><b>¥ <span id="used">4,962</span></b><span>已用 / ¥ 8,000</span></div>
       </div>
       <div class="cats">
-        <div><p><span>餐饮</span><span>¥ 1,846</span></p><div class="o-gauge" style="--v:74"></div></div>
-        <div><p><span>交通</span><span>¥ 512</span></p><div class="o-gauge" style="--v:34"></div></div>
-        <div><p><span>居家缴费</span><span>¥ 1,204</span></p><div class="o-gauge" style="--v:60"></div></div>
-        <div><p><span>购物</span><span>¥ 1,400</span></p><div class="o-gauge" style="--v:47"></div></div>
+        <div><p><span>餐饮</span><span>¥ 1,846</span></p><div class="o-gauge" style="--v:74;--i:4"></div></div>
+        <div><p><span>交通</span><span>¥ 512</span></p><div class="o-gauge" style="--v:34;--i:5"></div></div>
+        <div><p><span>居家缴费</span><span>¥ 1,204</span></p><div class="o-gauge" style="--v:60;--i:6"></div></div>
+        <div><p><span>购物</span><span>¥ 1,400</span></p><div class="o-gauge" style="--v:47;--i:7"></div></div>
       </div>
     </section>
   </div>
 </div>
 <script>
+  // 余额和已用预算从 0 读到当前值，像仪表上电
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const countUp = (el, to, fmt, ms = 1200) => {
+    if (still) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    const step = now => { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(to * e); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  const bal = document.getElementById("bal"), cents = document.getElementById("cents");
+  countUp(bal, 48236.57, v => Math.floor(v).toLocaleString("en-US"), 1400);
+  countUp(cents, 48236.57, v => "." + String(Math.round(v * 100) % 100).padStart(2, "0"), 1400);
+  countUp(document.getElementById("used"), 4962, v => Math.round(v).toLocaleString("en-US"), 1200);
   document.querySelectorAll(".o-tabs button").forEach(b => b.onclick = () =>
     document.querySelectorAll(".o-tabs button").forEach(x => x.setAttribute("aria-selected", String(x === b))));
 </script>

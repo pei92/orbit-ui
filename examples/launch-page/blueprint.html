@@ -27,6 +27,16 @@
   .plot .strong { fill: var(--o-text); font-size: 13px; }
   .sat { offset-path: path("M 450 140 A 290 220 0 1 1 449.9 140"); animation: fly 24s linear infinite; }
   @keyframes fly { to { offset-distance: 100%; } }
+  /* 地球经线来回翻转，像地球在转；未来轨道的虚线缓慢流动；分离点和标注依次亮起 */
+  .meridian { transform-box: fill-box; transform-origin: center; animation: turn 14s ease-in-out infinite alternate; }
+  .meridian + .meridian { animation-delay: -7s; }
+  @keyframes turn { from { transform: scaleX(1); } to { transform: scaleX(-1); } }
+  .flow { animation: flow 3s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -24; } }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop .5s var(--o-spring) both; }
+  @keyframes pop { from { transform: scale(0); } }
+  .fade { animation: fade .6s var(--o-ease) both; }
+  @keyframes fade { from { opacity: 0; } }
   @media (max-width: 860px) {
     .sheet { grid-template-columns: 1fr; margin: 8px; }
     .copy { border-right: 0; border-bottom: 1px solid var(--o-line-strong); padding: 24px; }
@@ -36,7 +46,7 @@
 </head>
 <body>
   <div class="sheet">
-    <section class="copy">
+    <section class="copy o-stagger">
       <dl class="titleblock">
         <dt>任务</dt><dd>XY-07 雁阵</dd>
         <dt>图号</dt><dd>ORB-0718-A</dd>
@@ -56,25 +66,27 @@
         <!-- 地球 -->
         <circle cx="450" cy="360" r="120" fill="none" stroke="var(--o-line-strong)" stroke-width="1.5"/>
         <path d="M 330 360 A 120 40 0 0 0 570 360" fill="none" stroke="var(--o-line)" />
+        <ellipse class="meridian" cx="450" cy="360" rx="44" ry="120" fill="none" stroke="var(--o-line)"/>
+        <ellipse class="meridian" cx="450" cy="360" rx="44" ry="120" fill="none" stroke="var(--o-line)"/>
         <line x1="450" y1="210" x2="450" y2="510" stroke="var(--o-line)" stroke-dasharray="2 4"/>
         <!-- 转移轨迹（已飞） -->
-        <path d="M 400 248 C 360 200, 300 190, 210 260" fill="none" stroke="var(--o-text)" stroke-width="1.5"/>
+        <path class="o-draw" pathLength="1" style="--d:.3s;--t:1.6s" d="M 400 248 C 360 200, 300 190, 210 260" fill="none" stroke="var(--o-text)" stroke-width="1.5"/>
         <!-- 目标轨道（未来） -->
-        <ellipse cx="450" cy="360" rx="290" ry="220" fill="none" stroke="var(--o-text)" stroke-dasharray="6 6" stroke-width="1"/>
+        <ellipse class="flow" cx="450" cy="360" rx="290" ry="220" fill="none" stroke="var(--o-text)" stroke-dasharray="6 6" stroke-width="1"/>
         <!-- 三批分离点 -->
         <g fill="var(--o-bg)" stroke="var(--o-text)" stroke-width="1.5">
-          <circle cx="210" cy="260" r="6"/><circle cx="168" cy="380" r="6"/><circle cx="214" cy="482" r="6"/>
+          <circle class="pop" style="animation-delay:1.8s" cx="210" cy="260" r="6"/><circle class="pop" style="animation-delay:2.1s" cx="168" cy="380" r="6"/><circle class="pop" style="animation-delay:2.4s" cx="214" cy="482" r="6"/>
         </g>
         <g>
-          <line x1="210" y1="260" x2="120" y2="218" stroke="var(--o-line-strong)"/>
-          <text x="40" y="190" class="strong">第一批 · 4 颗</text><text x="40" y="208">T+00:52:10</text>
-          <line x1="168" y1="380" x2="60" y2="380" stroke="var(--o-line-strong)"/>
-          <text x="20" y="372" class="strong">第二批</text><text x="20" y="398">+94 s</text>
-          <line x1="214" y1="482" x2="100" y2="560" stroke="var(--o-line-strong)"/>
-          <text x="40" y="578" class="strong">第三批</text><text x="40" y="596">+188 s</text>
+          <line class="o-draw" pathLength="1" style="--d:1.9s;--t:.5s" x1="210" y1="260" x2="120" y2="218" stroke="var(--o-line-strong)"/>
+          <g class="fade" style="animation-delay:2.3s"><text x="40" y="190" class="strong">第一批 · 4 颗</text><text x="40" y="208">T+00:52:10</text></g>
+          <line class="o-draw" pathLength="1" style="--d:2.2s;--t:.5s" x1="168" y1="380" x2="60" y2="380" stroke="var(--o-line-strong)"/>
+          <g class="fade" style="animation-delay:2.6s"><text x="20" y="372" class="strong">第二批</text><text x="20" y="398">+94 s</text></g>
+          <line class="o-draw" pathLength="1" style="--d:2.5s;--t:.5s" x1="214" y1="482" x2="100" y2="560" stroke="var(--o-line-strong)"/>
+          <g class="fade" style="animation-delay:2.9s"><text x="40" y="578" class="strong">第三批</text><text x="40" y="596">+188 s</text></g>
         </g>
         <!-- 尺寸标注 -->
-        <line x1="450" y1="360" x2="740" y2="360" stroke="var(--o-line-strong)"/>
+        <line class="o-draw" pathLength="1" style="--d:1s;--t:.8s" x1="450" y1="360" x2="740" y2="360" stroke="var(--o-line-strong)"/>
         <text x="600" y="350">h = 550 km</text>
         <text x="600" y="380">i = 97.6°</text>
         <rect class="sat" width="8" height="8" x="-4" y="-4" fill="var(--o-signal)"/>

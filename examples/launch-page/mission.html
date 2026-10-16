@@ -27,6 +27,7 @@
   .row b small { font-size: 13px; color: var(--o-text-dim); margin-left: 4px; font-weight: 400; }
   .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   .checks li { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--o-line); font-size: 14px; }
+  .t .o-tick.is-tick { animation-duration: 900ms; }
   .foot { display: flex; justify-content: space-between; gap: 16px; padding: 12px 28px; border-top: 1px solid var(--o-line); font: 400 13px/1.4 var(--o-font-mono); color: var(--o-text-dim); }
   @media (max-width: 860px) {
     .deck { grid-template-columns: 1fr; }
@@ -40,21 +41,21 @@
 <body class="o-grid-bg">
   <header class="bar">
     <div class="brand">星砚航天<span>XY-07 雁阵</span></div>
-    <div class="utc">UTC 2026-10-18 00:31:43</div>
+    <div class="utc">UTC 2026-10-18 <span id="utc">00:31:43</span></div>
     <span class="o-status o-status--nominal">全系统正常</span>
   </header>
 
   <main class="deck">
-    <section class="rows">
+    <section class="rows o-stagger">
       <div class="row"><span class="o-label">目标轨道</span><b>550<small>km SSO</small></b></div>
       <div class="row"><span class="o-label">倾角</span><b>97.6<small>°</small></b></div>
       <div class="row"><span class="o-label">载荷</span><b>12<small>颗 · 1,384 kg</small></b></div>
-      <div class="row"><span class="o-label">推进剂加注</span><b>94.2<small>%</small></b>
-        <div class="o-gauge" style="--v:94.2;margin-top:8px"></div></div>
+      <div class="row"><span class="o-label">推进剂加注</span><b><span class="o-tick" id="fuel">94.2</span><small>%</small></b>
+        <div class="o-gauge" id="fuel-g" style="--v:94.2;margin-top:8px"></div></div>
     </section>
 
-    <section class="center">
-      <div class="t"><small>距点火</small>T−01:42:17</div>
+    <section class="center o-stagger">
+      <div class="t"><small>距点火</small><span class="o-tick" id="t">T−01:42:17</span></div>
       <h1>12 颗遥感卫星，一次送入晨昏轨道</h1>
       <p class="lede">发射窗口 10 月 18 日 02:14 UTC，持续 11 分钟。直播从 T−30 分钟开始，全程播放箭上相机与遥测。</p>
       <div class="cta">
@@ -64,10 +65,10 @@
     </section>
 
     <section>
-      <ul class="checks">
+      <ul class="checks o-stagger">
         <li>气象 · 高空风 <span class="o-status o-status--nominal">通过</span></li>
         <li>靶场安全 <span class="o-status o-status--nominal">通过</span></li>
-        <li>一级液氧补加 <span class="o-status o-status--warn">进行中</span></li>
+        <li>一级液氧补加 <span class="o-status o-status--warn" id="lox">进行中</span></li>
         <li>测控链路 <span class="o-status o-status--nominal">238 ms</span></li>
         <li>回收船就位 <span class="o-status o-status--nominal">东经 121.4°</span></li>
       </ul>
@@ -78,5 +79,24 @@
     <span>下一个检查点 T−01:30:00 · 一级推进剂加注完成</span>
     <span>酒泉 · 9A 工位</span>
   </footer>
+<script>
+  // 倒计时每秒走一格；分钟位变化时闪一下。推进剂读数慢慢爬升，到 100% 时检查项变绿
+  const tick = (el, text) => { if (el.textContent === text) return; el.textContent = text; el.classList.remove("is-tick"); void el.offsetWidth; el.classList.add("is-tick"); };
+  const p = n => String(n).padStart(2, "0");
+  let s = 1 * 3600 + 42 * 60 + 17, utc = 31 * 60 + 43, fuel = 94.2;
+  const t = document.getElementById("t"), u = document.getElementById("utc");
+  const f = document.getElementById("fuel"), g = document.getElementById("fuel-g"), lox = document.getElementById("lox");
+  setInterval(() => {
+    s = Math.max(0, s - 1); utc++;
+    const text = `T−${p(s / 3600 | 0)}:${p((s / 60 | 0) % 60)}:${p(s % 60)}`;
+    if (s % 60 === 59) tick(t, text); else t.textContent = text;
+    u.textContent = `${p(utc / 3600 | 0)}:${p((utc / 60 | 0) % 60)}:${p(utc % 60)}`;
+  }, 1000);
+  const fill = setInterval(() => {
+    fuel = Math.min(100, +(fuel + .1).toFixed(1));
+    tick(f, fuel.toFixed(1)); g.style.setProperty("--v", fuel);
+    if (fuel >= 100) { clearInterval(fill); lox.className = "o-status o-status--nominal"; lox.textContent = "完成"; }
+  }, 2600);
+</script>
 </body>
 </html>

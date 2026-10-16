@@ -49,6 +49,14 @@
   .alerts ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
   .alerts li { display: grid; gap: 4px; font-size: 14px; }
   .alerts small { color: var(--o-text-dim); font-size: 13px; padding-left: 14px; }
+  /* 用电柱从基线长出来，当前这一小时在呼吸；切换房间时标题重新浮现 */
+  .energy rect { transform-box: fill-box; transform-origin: bottom; animation: grow .7s var(--o-ease) both; animation-delay: calc(.2s + var(--i, 0) * 30ms); }
+  .energy rect.now { animation: grow .7s var(--o-ease) .8s both, o-blink 2.4s ease-in-out 1.6s infinite; }
+  @keyframes grow { from { transform: scaleY(0); } }
+  .temp b.is-tick { animation: o-tick 600ms var(--o-ease); }
+  h1.again { animation: o-rise .5s var(--o-ease); }
+  .dev { transition: background var(--o-slow) var(--o-ease); }
+  .dev.flash { background: color-mix(in srgb, var(--o-accent) 8%, transparent); }
   @media (max-width: 1100px) {
     .climate, .devices, .energy, .alerts { grid-column: span 12; }
   }
@@ -65,7 +73,7 @@
 </head>
 <body>
 <div class="app">
-  <nav>
+  <nav class="o-stagger">
     <div class="brand">
       <span class="o-stripe" style="--w:48px" aria-hidden="true"></span>
       <b>翠湖苑 3-1102</b>
@@ -92,7 +100,7 @@
     </div>
   </nav>
 
-  <main>
+  <main class="o-stagger">
     <div class="head">
       <div>
         <h1>客厅</h1>
@@ -101,10 +109,10 @@
       <span class="o-status o-status--nominal">全屋安防已开启</span>
     </div>
 
-    <div class="grid">
+    <div class="grid o-stagger">
       <section class="o-panel climate">
         <div class="o-arc" role="img" aria-label="室温 24.5 度，目标 25 度">
-          <div class="temp"><b>24.5°</b><span>目标 25°</span></div>
+          <div class="temp"><b>24.5°</b><span>目标 <span id="target">25</span>°</span></div>
         </div>
         <dl>
           <div><dt>空调</dt><dd>制冷 · 自动风</dd></div>
@@ -138,7 +146,7 @@
             <rect x="308" y="80" width="14" height="40"/><rect x="333" y="90" width="14" height="30"/><rect x="358" y="70" width="14" height="50"/>
             <rect x="383" y="56" width="14" height="64"/><rect x="408" y="44" width="14" height="76"/><rect x="433" y="38" width="14" height="82"/>
           </g>
-          <rect x="458" y="22" width="14" height="98" fill="var(--o-accent)"/>
+          <rect class="now" x="458" y="22" width="14" height="98" fill="var(--o-accent)"/>
           <text x="8" y="136">0:00</text><text x="200" y="136">8:00</text><text x="400" y="136">16:00</text><text x="448" y="16">18 时 0.84</text>
         </svg>
       </section>
@@ -156,8 +164,24 @@
 <script>
   document.querySelectorAll(".o-list button").forEach(b => b.onclick = () => {
     document.querySelectorAll(".o-list button").forEach(x => x.setAttribute("aria-current", String(x === b)));
-    document.querySelector("h1").textContent = b.firstChild.textContent;
+    const h = document.querySelector("h1");
+    h.textContent = b.firstChild.textContent;
+    h.classList.remove("again"); void h.offsetWidth; h.classList.add("again");
   });
+  // 用电柱按顺序长出来
+  document.querySelectorAll(".energy g rect").forEach((r, i) => r.style.setProperty("--i", i));
+  // 目标温度可以调：刻度环跟着转到新位置
+  let target = 25;
+  const arc = document.querySelector(".climate .o-arc"), tgt = document.getElementById("target");
+  document.querySelectorAll(".stepper .o-btn").forEach((b, i) => b.onclick = () => {
+    target = Math.max(16, Math.min(30, target + (i ? .5 : -.5)));
+    tgt.textContent = String(target);
+    arc.style.setProperty("--v", Math.round(Math.max(10, Math.min(100, 82 + (target - 25) * 8))));
+  });
+  // 拨动开关时，这一行轻轻亮一下
+  document.querySelectorAll(".dev .o-switch").forEach(sw => sw.addEventListener("change", () => {
+    const row = sw.closest(".dev"); row.classList.add("flash"); setTimeout(() => row.classList.remove("flash"), 500);
+  }));
 </script>
 </body>
 </html>

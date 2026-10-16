@@ -89,7 +89,7 @@
           <div class="t" id="t">T−01:42:17</div>
         </div>
         <div class="stack">
-          <div><span class="o-label">轨道高度</span><div class="o-readout">412.6<small>km</small></div></div>
+          <div><span class="o-label">轨道高度</span><div class="o-readout"><span class="o-tick" id="alt">412.6</span><small>km</small></div></div>
           <div><span class="o-label">推进剂加注 94.2%</span><div class="o-gauge" style="--v:94.2;margin-top:8px"></div></div>
         </div>
         <svg class="spark wide" viewBox="0 0 400 80" preserveAspectRatio="none" aria-label="近 60 秒高度曲线">
@@ -159,6 +159,11 @@
     const attr = b.closest(".o-tabs") ? "aria-selected" : "aria-current";
     b.closest("ul, .o-tabs").querySelectorAll("button").forEach(x => x.setAttribute(attr, String(x === b)));
   }));
+  // 轨道高度每隔一会儿刷新一次，变化时亮一下
+  const tick = (el, text) => { if (el.textContent === text) return; el.textContent = text; el.classList.remove("is-tick"); void el.offsetWidth; el.classList.add("is-tick"); };
+  let alt = 412.6;
+  const altEl = document.getElementById("alt");
+  setInterval(() => { alt = +(alt + (Math.random() - .35) * .3).toFixed(1); tick(altEl, alt.toFixed(1)); }, 1800);
   // 倒计时：只有变化的那一位会变，等宽数字保证宽度不跳
   let s = 1 * 3600 + 42 * 60 + 17;
   const el = document.getElementById("t");

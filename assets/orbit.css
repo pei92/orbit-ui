@@ -40,7 +40,12 @@
   --o-ease: cubic-bezier(.2, .7, .1, 1);
   --o-fast: 140ms;
   --o-slow: 420ms;
+  --o-spring: cubic-bezier(.34, 1.45, .64, 1); /* 开关、选中：落定时轻微过冲 */
+  --o-enter: 720ms;                             /* 首次进入：读数归位、弧线充满 */
 }
+
+/* 让 --v 可以被过渡和动画：刻度环、刻度条从 0 读到目标值 */
+@property --v { syntax: "<number>"; inherits: true; initial-value: 0; }
 
 /* ---------- 2. 方向令牌：一个方向只有一个主角色 ---------- */
 
@@ -223,11 +228,24 @@ body {
   font: 500 var(--o-text-md)/1 var(--o-font-body);
   cursor: pointer;
   clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
-  transition: background var(--o-fast) var(--o-ease), color var(--o-fast) var(--o-ease), transform var(--o-fast) var(--o-ease);
+  transition: background var(--o-fast) var(--o-ease), color var(--o-fast) var(--o-ease), border-color var(--o-fast) var(--o-ease),
+    box-shadow var(--o-slow) var(--o-ease), transform var(--o-fast) var(--o-ease);
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
 }
-.o-btn:hover { background: var(--o-surface-2); }
-.o-btn:active { transform: translateY(1px); }
+.o-btn:hover { background: var(--o-surface-2); border-color: var(--o-text); }
+.o-btn:active { transform: translateY(1px) scale(.985); }
+/* 悬停时一道细光从左扫到右，只扫一次 */
+.o-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, currentColor 16%, transparent) 50%, transparent 70%);
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+.o-btn:hover::before { transform: translateX(110%); transition: transform 700ms var(--o-ease); }
 .o-btn:focus-visible { outline: 2px solid var(--o-accent); outline-offset: 3px; }
 .o-btn[disabled] { opacity: .4; cursor: not-allowed; transform: none; }
 
@@ -237,7 +255,8 @@ body {
   color: var(--o-accent-ink);
   box-shadow: var(--o-glow);
 }
-.o-btn--primary:hover { background: color-mix(in srgb, var(--o-accent) 86%, white); }
+.o-btn--primary:hover { background: color-mix(in srgb, var(--o-accent) 86%, white); border-color: color-mix(in srgb, var(--o-accent) 86%, white); }
+.o-btn--danger:hover { background: color-mix(in srgb, var(--o-alert) 12%, transparent); border-color: var(--o-alert); }
 
 .o-btn--danger { border-color: var(--o-alert); color: var(--o-alert); }
 
@@ -262,7 +281,10 @@ body {
   color: var(--o-text);
   font: 400 var(--o-text-md)/1 var(--o-font-mono);
   border-radius: var(--o-radius);
+  transition: border-color var(--o-fast) var(--o-ease), box-shadow var(--o-slow) var(--o-ease);
 }
+.o-input:hover { border-bottom-color: var(--o-text); }
+.o-input[aria-invalid="true"] { animation: o-shake 360ms var(--o-ease); }
 .o-input:focus { outline: none; border-color: var(--o-accent); box-shadow: inset 0 -2px 0 var(--o-accent); }
 .o-input[aria-invalid="true"] { border-color: var(--o-alert); box-shadow: inset 0 -2px 0 var(--o-alert); }
 
@@ -281,9 +303,9 @@ body {
   box-shadow: 0 0 8px var(--c, var(--o-signal));
 }
 .o-status--nominal { --c: var(--o-signal); }
-.o-status--nominal::before { border-radius: 50%; }
+.o-status--nominal::before { border-radius: 50%; animation: o-breathe 3.2s ease-in-out infinite; }
 .o-status--warn { --c: var(--o-warn); }
-.o-status--warn::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.o-status--warn::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); animation: o-breathe 1.8s ease-in-out infinite; }
 .o-status--alert { --c: var(--o-alert); color: var(--o-alert); }
 .o-status--alert::before { animation: o-blink 1s steps(2) infinite; }
 
@@ -303,6 +325,8 @@ body {
   width: calc(var(--v) * 1%);
   background: var(--o-accent);
   transition: width var(--o-slow) var(--o-ease);
+  animation: o-fill var(--o-enter) var(--o-ease) both;
+  animation-delay: calc(200ms + var(--i, 0) * 80ms);
 }
 
 .o-divider {
@@ -322,6 +346,7 @@ body {
   background: linear-gradient(90deg,
     var(--o-stripe-1, var(--o-accent)) 0 25%, var(--o-stripe-2, var(--o-accent)) 0 50%,
     var(--o-stripe-3, var(--o-accent)) 0 75%, var(--o-stripe-4, var(--o-accent)) 0);
+  animation: o-wipe 700ms var(--o-ease) 120ms both;
 }
 
 /* 节点引线：起点实心圆点，终点短竖刻度。用来分区、连接标注与对象 */
@@ -330,6 +355,8 @@ body {
   height: 1px;
   background: var(--o-line-strong);
   margin: var(--o-space-6) 5px;
+  transform-origin: left;
+  animation: o-draw-x 900ms var(--o-ease) both;
 }
 .o-rule::before,
 .o-rule::after { content: ""; position: absolute; top: 50%; }
@@ -349,6 +376,8 @@ body {
   display: grid;
   place-items: center;
   text-align: center;
+  transition: --v var(--o-slow) var(--o-ease);
+  animation: o-arc-in 1.2s var(--o-ease) 150ms backwards;
 }
 .o-arc::before,
 .o-arc::after {
@@ -362,6 +391,7 @@ body {
   background: repeating-conic-gradient(var(--track) 0 .6deg, transparent .6deg 6deg);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 8px));
           mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 8px));
+  animation: o-orbit 240s linear infinite; /* 刻度圈极慢地转，像仪表还活着 */
 }
 /* 内圈读数弧：细线，进度部分实线 */
 .o-arc::after {
@@ -402,8 +432,9 @@ body {
   text-decoration: none;
   cursor: pointer;
   border-radius: var(--o-radius);
+  transition: background var(--o-fast) var(--o-ease), color var(--o-fast) var(--o-ease), padding var(--o-slow) var(--o-ease), box-shadow var(--o-slow) var(--o-ease);
 }
-.o-list > li > :hover { background: var(--o-surface-2); }
+.o-list > li > :hover { background: var(--o-surface-2); padding-left: 18px; }
 .o-list > li > [aria-current="true"],
 .o-list > li > [aria-selected="true"] {
   background: var(--o-accent);
@@ -418,7 +449,10 @@ body {
   border: 0; background: transparent; color: var(--o-text-dim);
   font: 500 var(--o-text-sm)/1 var(--o-font-body);
   padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  transition: background var(--o-slow) var(--o-spring), color var(--o-fast) var(--o-ease), transform var(--o-fast) var(--o-ease);
 }
+.o-tabs > button:hover { color: var(--o-text); }
+.o-tabs > button:active { transform: scale(.96); }
 .o-tabs > [aria-selected="true"] { background: var(--o-accent); color: var(--o-accent-ink); }
 
 /* 任务目标：空心圆 = 待办，实心圆 = 完成，圆环 = 进行中 */
@@ -433,7 +467,8 @@ body {
 }
 .o-objectives li[data-state="done"] { color: var(--o-text-dim); }
 .o-objectives li[data-state="done"]::before { background: var(--o-line-strong); }
-.o-objectives li[data-state="active"]::before { border-color: var(--o-warn); box-shadow: inset 0 0 0 2px var(--o-bg), inset 0 0 0 5px var(--o-warn); }
+.o-objectives li[data-state="active"]::before { border-color: var(--o-warn); box-shadow: inset 0 0 0 2px var(--o-bg), inset 0 0 0 5px var(--o-warn); animation: o-ring 2s ease-out infinite; }
+.o-objectives li[data-state="done"]::before { animation: o-pop 420ms var(--o-spring) both; animation-delay: calc(300ms + var(--i, 0) * 90ms); }
 
 /* ---------- 7. 日常业务控件：开关、表格、步骤、头像 ---------- */
 
@@ -460,7 +495,7 @@ body {
   border-radius: 50%;
   background: var(--o-text-dim);
   transform: translateY(-50%);
-  transition: transform var(--o-fast) var(--o-ease), background var(--o-fast) var(--o-ease);
+  transition: transform var(--o-slow) var(--o-spring), background var(--o-fast) var(--o-ease), box-shadow var(--o-slow) var(--o-ease);
 }
 .o-switch:checked { border-color: var(--o-accent); background: color-mix(in srgb, var(--o-accent) 18%, transparent); }
 .o-switch:checked::after { transform: translate(20px, -50%); background: var(--o-accent); box-shadow: 0 0 10px color-mix(in srgb, var(--o-accent) 60%, transparent); }
@@ -478,6 +513,7 @@ body {
 }
 .o-table td { padding: 12px; border-bottom: 1px solid var(--o-line); vertical-align: middle; }
 .o-table .num { text-align: right; font-family: var(--o-font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.o-table tbody tr { transition: background var(--o-fast) var(--o-ease); }
 .o-table tbody tr:hover { background: var(--o-surface-2); }
 
 /* 步骤轨迹：订单、物流、审批。竖线是“轨迹”，节点是“检查点” */
@@ -499,7 +535,8 @@ body {
 .o-track li:last-child::after { display: none; }
 .o-track li[data-state="done"]::before { background: var(--o-line-strong); }
 .o-track li[data-state="done"]::after { background: var(--o-line-strong); }
-.o-track li[data-state="active"]::before { border-color: var(--o-accent); background: var(--o-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--o-accent) 22%, transparent); }
+.o-track li[data-state="active"]::before { border-color: var(--o-accent); background: var(--o-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--o-accent) 22%, transparent); animation: o-ping 2s ease-out infinite; }
+.o-track li[data-state="done"]::after { transform-origin: top; animation: o-draw-y 500ms var(--o-ease) both; animation-delay: calc(200ms + var(--i, 0) * 120ms); }
 .o-track b { display: block; font-weight: 500; }
 .o-track small { color: var(--o-text-dim); font: 500 var(--o-text-sm)/1.5 var(--o-font-mono); font-variant-numeric: tabular-nums; }
 
@@ -511,7 +548,9 @@ body {
   font: 500 14px/1 var(--o-font-body);
   color: var(--o-text);
   background: var(--o-surface-2);
+  transition: border-color var(--o-fast) var(--o-ease), transform var(--o-slow) var(--o-spring);
 }
+.o-avatar:hover { border-color: var(--o-text); transform: scale(1.06); }
 
 /* ---------- 8. 动效原语 ---------- */
 @keyframes o-sweep { from { transform: translateX(0); } to { transform: translateX(240%); } }
@@ -521,8 +560,49 @@ body {
   from { opacity: 0; clip-path: inset(0 100% 0 0); }
   to { opacity: 1; clip-path: inset(0 0 0 0); }
 }
+@keyframes o-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes o-fill { from { width: 0; } }
+@keyframes o-arc-in { from { --v: 0; } }
+@keyframes o-draw-x { from { transform: scaleX(0); } }
+@keyframes o-draw-y { from { transform: scaleY(0); } }
+@keyframes o-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes o-breathe { 50% { opacity: .45; box-shadow: 0 0 2px var(--c, var(--o-signal)); } }
+@keyframes o-ring {
+  from { box-shadow: inset 0 0 0 2px var(--o-bg), inset 0 0 0 5px var(--o-warn), 0 0 0 0 color-mix(in srgb, var(--o-warn) 55%, transparent); }
+  to { box-shadow: inset 0 0 0 2px var(--o-bg), inset 0 0 0 5px var(--o-warn), 0 0 0 9px transparent; }
+}
+@keyframes o-ping {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--o-accent) 60%, transparent); }
+  to { box-shadow: 0 0 0 11px transparent; }
+}
+@keyframes o-pop { from { transform: translateY(1px) scale(0); } }
+@keyframes o-shake { 20%, 60% { transform: translateX(-3px); } 40%, 80% { transform: translateX(3px); } }
+@keyframes o-tick { from { color: var(--o-text); text-shadow: 0 0 14px currentColor; } }
+@keyframes o-float { 50% { transform: translateY(-10px); } }
+@keyframes o-dash { to { stroke-dashoffset: 0; } }
+
 /* 面板启动：自左向右“上电”，同一屏依次延迟 60ms */
 .o-boot { animation: o-boot var(--o-slow) var(--o-ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+/* 浮现：内容块自下而上淡入。.o-stagger 的直接子元素依次延迟 70ms */
+.o-rise { animation: o-rise var(--o-enter) var(--o-ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.o-stagger > * { animation: o-rise var(--o-enter) var(--o-ease) both; }
+.o-stagger > :nth-child(2) { animation-delay: 70ms; }
+.o-stagger > :nth-child(3) { animation-delay: 140ms; }
+.o-stagger > :nth-child(4) { animation-delay: 210ms; }
+.o-stagger > :nth-child(5) { animation-delay: 280ms; }
+.o-stagger > :nth-child(6) { animation-delay: 350ms; }
+.o-stagger > :nth-child(7) { animation-delay: 420ms; }
+.o-stagger > :nth-child(n+8) { animation-delay: 490ms; }
+
+/* 描线：SVG 路径从起点画到终点。路径上写 pathLength="1"，--d 控制开始时间、--t 控制时长 */
+.o-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: o-dash var(--t, 1.4s) var(--o-ease) var(--d, .2s) forwards; }
+
+/* 读数刷新：数字变化时由脚本加上 .is-tick，亮一下再回到原色 */
+.o-tick.is-tick { animation: o-tick 600ms var(--o-ease); }
+
+/* 漂浮：给星球这类主视觉一点慢呼吸，周期 12 秒以上 */
+.o-float { animation: o-float var(--t, 14s) ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
