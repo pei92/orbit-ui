@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="frontier">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XY-07 雁阵 · 星际拓荒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  html, body { height: 100%; }
+  body {
+    overflow-x: hidden;
+    /* 静态星点：三层不同大小，不闪 */
+    background:
+      radial-gradient(1px 1px at 12% 18%, #fff8 50%, transparent 51%),
+      radial-gradient(1px 1px at 34% 72%, #fff6 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 48% 12%, #fffa 50%, transparent 51%),
+      radial-gradient(1px 1px at 62% 88%, #fff5 50%, transparent 51%),
+      radial-gradient(1px 1px at 88% 8%, #fff7 50%, transparent 51%),
+      radial-gradient(1px 1px at 22% 46%, #fff4 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 6% 84%, #fff8 50%, transparent 51%),
+      var(--o-bg);
+  }
+  .page { position: relative; min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+
+  /* ---- 星球：一束从左上来的硬光，暗面融进背景 ---- */
+  .world { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .planet {
+    position: absolute; right: -6vw; top: 50%; width: min(78vh, 62vw); aspect-ratio: 1; transform: translateY(-46%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 32% 30%, rgba(255,236,206,.55), transparent 38%),
+      repeating-linear-gradient(-18deg, rgba(0,0,0,0) 0 22px, rgba(60,30,18,.18) 22px 30px, rgba(0,0,0,0) 30px 58px),
+      radial-gradient(circle at 36% 36%, #d9b48a 0%, #b07a52 26%, #6b3f2a 50%, #24140f 72%, #0b0d10 86%);
+    box-shadow: inset -40px -30px 80px rgba(11,13,16,.9);
+  }
+  .callouts { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  /* 标注牌：压在星球亮面上也读得清 */
+  .tag {
+    position: absolute; transform: translateY(-50%); display: grid; gap: 2px; white-space: nowrap;
+    padding: 7px 10px; background: rgba(11,13,16,.74); border: 1px solid var(--o-line); border-radius: 3px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .tag b { font: 500 13px/1.3 var(--o-font-body); }
+  .tag span { font: 500 12px/1.3 var(--o-font-mono); color: var(--o-text-dim); }
+
+  /* ---- 顶栏 ---- */
+  .top { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px clamp(20px, 4vw, 56px); }
+  .brand { display: grid; gap: 8px; }
+  .brand b { font: 500 16px/1 var(--o-font-display); letter-spacing: .02em; }
+  .brand span { color: var(--o-text-dim); font: 500 13px/1 var(--o-font-mono); }
+
+  /* ---- 左栏 ---- */
+  .main { position: relative; padding: 0 clamp(20px, 4vw, 56px); display: grid; align-content: center; gap: 28px; max-width: 640px; }
+  h1 { font: 300 clamp(40px, 5.2vw, 76px)/1.15 var(--o-font-display); margin: 0; letter-spacing: .01em; }
+  h1 .nb { white-space: nowrap; }
+  .lede { margin: 0; color: var(--o-text-dim); font-size: 16px; max-width: 32em; }
+  .status { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  .o-arc { --size: 176px; --v: 72; }
+  .arc-read { display: grid; gap: 4px; }
+  .arc-read .o-label { font-family: var(--o-font-body); }
+  .arc-read b { font: 500 30px/1 var(--o-font-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .o-panel { padding: 18px 20px; }
+  .o-panel h2 { margin: 0 0 14px; font: 600 13px/1 var(--o-font-body); color: var(--o-text-dim); display: flex; justify-content: space-between; }
+  .o-objectives { font-size: 15px; }
+  .o-objectives small { font: 500 13px/1 var(--o-font-mono); color: var(--o-text-dim); font-variant-numeric: tabular-nums; }
+
+  /* ---- 底部按键提示条 ---- */
+  .bar { position: relative; padding: 0 clamp(20px, 4vw, 56px) 24px; }
+  .bar .o-rule { margin: 0 5px 18px; }
+  .bar-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .o-btn { min-height: 44px; }
+  .where { color: var(--o-text-dim); font: 500 13px/1.4 var(--o-font-mono); font-variant-numeric: tabular-nums; }
+
+  @media (pointer: coarse), (max-width: 760px) { .o-key { display: none; } }
+  @media (max-width: 960px) {
+    .planet { width: 120vw; right: -50vw; top: 0; transform: none; opacity: .55; }
+    .callouts, .tag { display: none; }
+    .main { padding-top: 24px; padding-bottom: 32px; }
+  }
+  @media (max-width: 760px) {
+    .top .o-tabs { display: none; }
+    .status { grid-template-columns: 1fr; justify-items: start; }
+    .o-arc { --size: 172px; }
+    .arc-read b { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="world" aria-hidden="true">
+    <div class="planet">
+      <!-- 引线在星球自己的坐标里画（0–100），对象上的空心圆 → 斜线 → 折成水平线 → 标注牌 -->
+      <svg class="callouts" viewBox="0 0 100 100" overflow="visible">
+        <defs><mask id="behind" maskUnits="userSpaceOnUse" x="-100" y="-100" width="300" height="300">
+          <rect x="-100" y="-100" width="300" height="300" fill="#fff"/><circle cx="50" cy="50" r="50" fill="#000"/>
+        </mask></defs>
+        <g fill="none" vector-effect="non-scaling-stroke">
+          <!-- 轨道后半圈被星球挡住，前半圈压在星球上；亮段只有一处 -->
+          <path d="M -22 50 A 72 20 0 0 1 122 50" stroke="rgba(236,234,226,.35)" stroke-width="1" vector-effect="non-scaling-stroke" transform="rotate(-14 50 50)" mask="url(#behind)"/>
+          <path d="M -22 50 A 72 20 0 0 0 122 50" stroke="rgba(236,234,226,.4)" stroke-width="1" vector-effect="non-scaling-stroke" transform="rotate(-14 50 50)"/>
+          <path d="M -22 50 A 72 20 0 0 0 122 50" stroke="rgba(236,234,226,.95)" stroke-width=".3" stroke-linecap="round" transform="rotate(-14 50 50)" pathLength="100" stroke-dasharray="12 200"/>
+          <polyline points="-19.86,67.42 -19.86,80 12,80" stroke="rgba(236,234,226,.75)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+          <polyline points="58,26 58,12 46,12" stroke="rgba(236,234,226,.75)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        </g>
+        <!-- 锚点画在线之后、实心填充：线从圆心出发，被圆盖住，任何尺寸下都对齐 -->
+        <g fill="#0b0d10" stroke="rgba(236,234,226,.9)" stroke-width="1.2">
+          <circle cx="-19.86" cy="67.42" r=".8" vector-effect="non-scaling-stroke"/>
+          <circle cx="58" cy="26" r=".8" vector-effect="non-scaling-stroke"/>
+        </g>
+      </svg>
+      <div class="tag" style="left:12%;top:80%"><b>目标轨道 · 550 km</b><span>太阳同步 · 倾角 97.6°</span></div>
+      <div class="tag" style="right:54%;top:12%"><b>晨昏线</b><span>卫星将一直沿它飞行</span></div>
+    </div>
+  </div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="o-stripe" style="--w:56px;--h:4px" aria-hidden="true"></span>
+      <b>星砚航天</b>
+      <span>XY-07 雁阵</span>
+    </div>
+    <div class="o-tabs" role="tablist" aria-label="任务页面">
+      <button role="tab" aria-selected="true">概览</button>
+      <button role="tab" aria-selected="false">载荷</button>
+      <button role="tab" aria-selected="false">轨道</button>
+      <button role="tab" aria-selected="false">往期发射</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1>十二颗星，<br><span class="nb">送往晨昏线</span></h1>
+    <p class="lede">10 月 18 日 02:14 UTC，XY-07 雁阵把 12 颗遥感卫星送进 550 公里的太阳同步轨道。直播从 T−30 分钟开始。</p>
+
+    <div class="status">
+      <div class="o-arc" role="img" aria-label="距点火 1 小时 42 分 17 秒，准备进度 72%">
+        <div class="arc-read">
+          <span class="o-label">距点火</span>
+          <b id="t">01:42:17</b>
+        </div>
+      </div>
+      <section class="o-panel" aria-labelledby="obj">
+        <h2 id="obj"><span>发射前检查</span><span>3 / 5</span></h2>
+        <ul class="o-objectives">
+          <li data-state="done">靶场安全确认<small>23:58</small></li>
+          <li data-state="done">高空风评估通过<small>00:12</small></li>
+          <li data-state="done">测控链路建立<small>238 ms</small></li>
+          <li data-state="active">一级液氧补加<small>94.2%</small></li>
+          <li>最终放行投票<small>T−00:15</small></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bar">
+    <div class="o-rule"></div>
+    <div class="bar-row">
+      <div class="actions">
+        <a class="o-btn o-btn--primary" href="#live" data-key="Enter"><span class="o-key">Enter</span>观看直播</a>
+        <a class="o-btn" href="#remind" data-key="r"><span class="o-key">R</span>发射前 10 分钟提醒我</a>
+      </div>
+      <span class="where">酒泉 · 9A 工位 · UTC 00:31:43</span>
+    </div>
+  </footer>
+</div>
+<script>
+  // 按键提示是真的：键盘能触发，和点击走同一个入口
+  addEventListener("keydown", e => {
+    if (e.target.closest("input, textarea, [contenteditable]")) return;
+    const el = document.querySelector(`[data-key="${e.key === "Enter" ? "Enter" : e.key.toLowerCase()}"]`);
+    if (el) { e.preventDefault(); el.focus(); el.click(); }
+  });
+  let s = 1 * 3600 + 42 * 60 + 17;
+  const t = document.getElementById("t"), p = n => String(n).padStart(2, "0");
+  setInterval(() => { s = Math.max(0, s - 1); t.textContent = `${p(s / 3600 | 0)}:${p((s / 60 | 0) % 60)}:${p(s % 60)}`; }, 1000);
+</script>
+</body>
+</html>

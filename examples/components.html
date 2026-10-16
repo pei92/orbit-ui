@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="mission">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit UI 控件总览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&family=Jost:wght@300;500&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: end; margin-bottom: 32px; }
+  h1 { font: 600 32px/1.2 var(--o-font-display); margin: 0; }
+  header p { margin: 4px 0 0; color: var(--o-text-dim); }
+  .themes { display: flex; gap: 8px; flex-wrap: wrap; }
+  .themes .o-btn[aria-pressed="true"] { background: var(--o-surface-2); border-color: var(--o-accent); color: var(--o-accent); }
+  .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .o-panel h2 { font: 500 13px/1 var(--o-font-mono); color: var(--o-text-dim); margin: 0 0 20px; }
+  .stack { display: grid; gap: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .field label { display: block; margin-bottom: 6px; }
+  .err { color: var(--o-alert); font-size: 13px; margin: 6px 0 0; }
+  .tele { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .wide { grid-column: 1 / -1; }
+  svg.spark { width: 100%; height: 80px; display: block; }
+  .t { font: 700 56px/1 var(--o-font-mono); font-variant-numeric: tabular-nums; color: var(--o-accent); text-shadow: var(--o-glow); }
+</style>
+</head>
+<body class="o-grid-bg">
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Orbit UI 控件</h1>
+      <p>同一套变量，四个方向。切换色板，看控件语法是否仍然成立。</p>
+    </div>
+    <div class="themes" role="group" aria-label="方向色板">
+      <button class="o-btn" data-t="mission" aria-pressed="true">任务控制台</button>
+      <button class="o-btn" data-t="blueprint" aria-pressed="false">轨道蓝图</button>
+      <button class="o-btn" data-t="deepfield" aria-pressed="false">深空</button>
+      <button class="o-btn" data-t="frontier" aria-pressed="false">星际拓荒</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="o-panel o-boot" style="--i:0">
+      <h2>按钮</h2>
+      <div class="stack">
+        <div class="row">
+          <button class="o-btn o-btn--primary">发送指令</button>
+          <button class="o-btn">保存为草稿</button>
+        </div>
+        <div class="row">
+          <button class="o-btn" aria-busy="true">上行中…</button>
+          <button class="o-btn" disabled>链路未建立</button>
+          <button class="o-btn o-btn--danger">中止发射</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="o-panel o-boot" style="--i:1">
+      <h2>输入</h2>
+      <div class="stack">
+        <div class="field">
+          <label class="o-label" for="a">目标高度 km</label>
+          <input class="o-input" id="a" value="550.0">
+        </div>
+        <div class="field">
+          <label class="o-label" for="b">NORAD 编号</label>
+          <input class="o-input" id="b" value="2554" aria-invalid="true">
+          <p class="err">NORAD 编号是 5 位数字，例如 25544</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="o-panel o-boot" style="--i:2">
+      <h2>状态灯</h2>
+      <div class="stack">
+        <span class="o-status o-status--nominal">测控链路 · 238 ms</span>
+        <span class="o-status o-status--warn">一级液氧补加中</span>
+        <span class="o-status o-status--alert">二级姿控偏差超限</span>
+      </div>
+    </section>
+
+    <section class="o-panel o-boot wide" style="--i:3">
+      <h2>遥测读数</h2>
+      <div class="tele">
+        <div>
+          <span class="o-label">距点火</span>
+          <div class="t" id="t">T−01:42:17</div>
+        </div>
+        <div class="stack">
+          <div><span class="o-label">轨道高度</span><div class="o-readout">412.6<small>km</small></div></div>
+          <div><span class="o-label">推进剂加注 94.2%</span><div class="o-gauge" style="--v:94.2;margin-top:8px"></div></div>
+        </div>
+        <svg class="spark wide" viewBox="0 0 400 80" preserveAspectRatio="none" aria-label="近 60 秒高度曲线">
+          <line x1="0" y1="40" x2="400" y2="40" stroke="var(--o-line)"/>
+          <polyline fill="none" stroke="var(--o-accent)" stroke-width="1.5" vector-effect="non-scaling-stroke"
+            points="0,52 40,50 80,47 120,49 160,44 200,41 240,38 280,36 320,33 360,30 400,26"/>
+          <circle cx="400" cy="26" r="3" fill="var(--o-accent)"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="o-panel o-boot" style="--i:4">
+      <h2>菜单列表 · 选中整行反白</h2>
+      <ul class="o-list">
+        <li><button aria-current="true">载荷清单<small>12</small></button></li>
+        <li><button>轨道参数<small>SSO</small></button></li>
+        <li><button>测控站<small>4 / 5 在线</small></button></li>
+        <li><button>往期发射<small>06</small></button></li>
+      </ul>
+    </section>
+
+    <section class="o-panel o-boot" style="--i:5">
+      <h2>刻度环与任务目标</h2>
+      <div class="row" style="align-items:center;gap:20px">
+        <div class="o-arc" style="--size:132px;--v:72"><div><span class="o-label">准备</span><div class="o-readout" style="font-size:26px">72<small>%</small></div></div></div>
+        <ul class="o-objectives" style="flex:1;min-width:160px">
+          <li data-state="done">靶场安全确认</li>
+          <li data-state="active">一级液氧补加</li>
+          <li>最终放行投票</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="o-panel o-boot" style="--i:6">
+      <h2>线条 · 涂装条 · 按键 · 标签</h2>
+      <div class="stack">
+        <span class="o-stripe" style="--w:96px;--h:5px"></span>
+        <div class="o-rule" style="margin:8px 5px"></div>
+        <div class="row">
+          <button class="o-btn o-btn--primary"><span class="o-key">E</span>采集样本</button>
+          <button class="o-btn"><span class="o-key">R</span>切换视图</button>
+        </div>
+        <div class="o-tabs" role="tablist">
+          <button role="tab" aria-selected="true">概览</button>
+          <button role="tab" aria-selected="false">载荷</button>
+          <button role="tab" aria-selected="false">轨道</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="o-panel o-boot o-brackets" style="--i:7">
+      <h2>锁定区域（四角定位标）</h2>
+      <p style="margin:0">SAT-07-04 已锁定 · 方位 214.6° · 仰角 38.2°</p>
+    </section>
+  </div>
+</div>
+<script>
+  // 色板：按钮切换，也可以用 ?orbit=frontier 直接打开
+  const setTheme = t => {
+    document.documentElement.dataset.orbit = t;
+    document.querySelectorAll("[data-t]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.t === t)));
+  };
+  document.querySelectorAll("[data-t]").forEach(b => b.onclick = () => setTheme(b.dataset.t));
+  const q = new URLSearchParams(location.search).get("orbit");
+  if (q && document.querySelector(`[data-t="${CSS.escape(q)}"]`)) setTheme(q);
+  document.querySelectorAll(".o-list button, .o-tabs button").forEach(b => b.addEventListener("click", () => {
+    const attr = b.closest(".o-tabs") ? "aria-selected" : "aria-current";
+    b.closest("ul, .o-tabs").querySelectorAll("button").forEach(x => x.setAttribute(attr, String(x === b)));
+  }));
+  // 倒计时：只有变化的那一位会变，等宽数字保证宽度不跳
+  let s = 1 * 3600 + 42 * 60 + 17;
+  const el = document.getElementById("t");
+  setInterval(() => {
+    s = Math.max(0, s - 1);
+    const p = n => String(n).padStart(2, "0");
+    el.textContent = `T−${p(Math.floor(s / 3600))}:${p(Math.floor(s / 60) % 60)}:${p(s % 60)}`;
+  }, 1000);
+</script>
+</body>
+</html>

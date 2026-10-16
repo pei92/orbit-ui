@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="frontier">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>外卖订单追踪 · 星际拓荒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  /* 配送路线 = 轨道，骑手 = 卫星，预计送达 = 倒计时 */
+  body { min-height: 100vh; }
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 420px; min-height: 100vh; }
+  .map { position: relative; overflow: hidden; border-right: 1px solid var(--o-line); container-type: size; }
+  /* 路线和标注牌放进同一个 8:7 的画布，画布铺满地图区并居中裁切——两者永远共用一套坐标 */
+  .stage { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: max(100cqw, 100cqh * 8 / 7); aspect-ratio: 8 / 7; }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .street { stroke: rgba(236,234,226,.07); stroke-width: 10; fill: none; }
+  .street.sm { stroke-width: 5; stroke: rgba(236,234,226,.05); }
+  .tag {
+    position: absolute; transform: translate(-50%, calc(-100% - 18px)); white-space: nowrap; display: grid; gap: 2px;
+    padding: 7px 10px; background: rgba(11,13,16,.8); border: 1px solid var(--o-line); border-radius: 3px;
+  }
+  /* 靠近画布上沿的点，标注牌放到左下方，避免被顶栏和边缘裁掉 */
+  .tag.below-left { transform: translate(calc(-100% + 8px), 16px); }
+  .tag.below-right { transform: translate(-8px, 16px); }
+  .tag b { font: 500 13px/1.3 var(--o-font-body); }
+  .tag span { font: 500 12px/1.3 var(--o-font-mono); color: var(--o-text-dim); }
+  .map-top { position: absolute; left: 24px; top: 20px; right: 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .back { color: var(--o-text); text-decoration: none; font-size: 15px; }
+
+  .panel { padding: 28px 28px 24px; display: grid; gap: 24px; align-content: start; background: var(--o-bg); }
+  .eta { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .o-arc { --size: 132px; --v: 76; }
+  .eta-read { display: grid; gap: 2px; justify-items: center; }
+  .eta-read b { font: 500 34px/1 var(--o-font-mono); font-variant-numeric: tabular-nums; }
+  .eta-read span { font-size: 12px; color: var(--o-text-dim); }
+  .eta h1 { font: 400 24px/1.3 var(--o-font-display); margin: 0 0 6px; }
+  .eta p { margin: 0; color: var(--o-text-dim); font-size: 14px; }
+  .rider { display: flex; align-items: center; gap: 12px; }
+  .rider div { flex: 1; min-width: 0; }
+  .rider b { display: block; font-weight: 500; }
+  .rider small { color: var(--o-text-dim); font-size: 13px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row .o-btn { flex: 1; justify-content: center; }
+  h2 { font: 600 13px/1 var(--o-font-body); color: var(--o-text-dim); margin: 0 0 14px; display: flex; justify-content: space-between; }
+  .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 15px; }
+  .items li { display: flex; justify-content: space-between; gap: 12px; }
+  .items .num { font-family: var(--o-font-mono); font-variant-numeric: tabular-nums; }
+  .total { display: flex; justify-content: space-between; font-weight: 600; padding-top: 12px; border-top: 1px solid var(--o-line); margin-top: 4px; }
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .map { height: 46vh; min-height: 320px; border-right: 0; border-bottom: 1px solid var(--o-line); }
+    .panel { padding: 22px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="map o-grid-bg" aria-label="配送路线">
+    <div class="stage">
+    <svg viewBox="0 0 800 700" aria-hidden="true">
+      <path class="street" d="M -20 520 L 820 380"/>
+      <path class="street" d="M 260 -20 L 360 720"/>
+      <path class="street sm" d="M -20 180 L 820 120"/>
+      <path class="street sm" d="M 600 -20 L 540 720"/>
+      <path class="street sm" d="M -20 640 C 200 600 500 660 820 600"/>
+      <!-- 已走过的路线：实线；剩余：虚线 -->
+      <path d="M 170 560 C 260 520 300 470 330 420 S 420 300 470 280" fill="none" stroke="rgba(236,234,226,.9)" stroke-width="2"/>
+      <path d="M 470 280 C 520 260 560 220 580 190 S 640 150 660 140" fill="none" stroke="rgba(236,234,226,.6)" stroke-width="2" stroke-dasharray="4 6"/>
+      <circle cx="170" cy="560" r="6" fill="#0b0d10" stroke="rgba(236,234,226,.9)" stroke-width="1.5"/>
+      <circle cx="660" cy="140" r="7" fill="#0b0d10" stroke="var(--o-stripe-3)" stroke-width="2"/>
+      <circle cx="470" cy="280" r="14" fill="none" stroke="rgba(236,234,226,.25)"/>
+      <circle cx="470" cy="280" r="6" fill="#eceae2"/>
+    </svg>
+    <!-- 标注牌的百分比 = viewBox 坐标 ÷ 800 / 700 -->
+    <div class="tag" style="left:21.25%;top:80%"><b>老街牛肉粉</b><span>已取餐 18:24</span></div>
+    <div class="tag below-right" style="left:58.75%;top:40%"><b>骑手 · 陈师傅</b><span>距你 1.3 km</span></div>
+    <div class="tag below-left" style="left:82.5%;top:20%"><b>你的位置</b><span>翠湖苑 3 栋</span></div>
+    </div>
+    <div class="map-top">
+      <a class="back" href="index.html">← 订单</a>
+      <span class="o-status o-status--nominal">实时定位</span>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="eta">
+      <div class="o-arc" role="img" aria-label="预计 12 分钟后送达">
+        <div class="eta-read"><b>12</b><span>分钟</span></div>
+      </div>
+      <div>
+        <h1>骑手正在赶来</h1>
+        <p>预计 18:42 送达，比承诺时间<span style="white-space:nowrap">早 6 分钟</span></p>
+      </div>
+    </div>
+
+    <div class="rider">
+      <span class="o-avatar">陈</span>
+      <div><b>陈师傅</b><small>今日已送 23 单 · 好评 99.2%</small></div>
+    </div>
+    <div class="row">
+      <a class="o-btn o-btn--primary" href="#">联系骑手</a>
+      <a class="o-btn" href="#">修改送达备注</a>
+    </div>
+
+    <div class="o-rule o-rule--soft" style="margin:0 5px"></div>
+
+    <section>
+      <h2><span>配送进度</span><span>订单 2041 8833 0917</span></h2>
+      <ol class="o-track">
+        <li data-state="done"><b>已下单</b><small>18:05</small></li>
+        <li data-state="done"><b>商家已接单</b><small>18:06 · 预计 15 分钟出餐</small></li>
+        <li data-state="done"><b>骑手已取餐</b><small>18:24</small></li>
+        <li data-state="active"><b>配送中</b><small>途经南山路 · 剩余 1.3 km</small></li>
+        <li><b>送达</b><small>预计 18:42</small></li>
+      </ol>
+    </section>
+
+    <section>
+      <h2><span>老街牛肉粉（文三路店）</span><span>3 件</span></h2>
+      <ul class="items">
+        <li><span>招牌红烧牛肉粉 ×2</span><span class="num">¥ 52.00</span></li>
+        <li><span>卤蛋 ×1</span><span class="num">¥ 3.00</span></li>
+        <li><span>配送费</span><span class="num">¥ 2.50</span></li>
+        <li><span>满 50 减 8</span><span class="num">−¥ 8.00</span></li>
+      </ul>
+      <div class="total"><span>实付</span><span class="num">¥ 49.50</span></div>
+    </section>
+  </aside>
+</div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="blueprint">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XY-07 雁阵 · 轨道蓝图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  :root { --o-font-mono: "IBM Plex Mono", Consolas, monospace; }
+  body { min-height: 100vh; }
+  .sheet { min-height: 100vh; display: grid; grid-template-columns: minmax(320px, 5fr) 7fr; border: 1px solid var(--o-line-strong); margin: 16px; }
+  .copy { padding: 40px; display: flex; flex-direction: column; gap: 28px; border-right: 1px solid var(--o-line-strong); }
+  .titleblock { display: grid; grid-template-columns: auto 1fr; border: 1px solid var(--o-line-strong); font: 400 12px/1.4 var(--o-font-mono); }
+  .titleblock > * { padding: 6px 10px; border-bottom: 1px solid var(--o-line); }
+  .titleblock dt { color: var(--o-text-dim); border-right: 1px solid var(--o-line); }
+  .titleblock dd { margin: 0; }
+  h1 { font: 600 clamp(36px, 4.6vw, 64px)/1.15 var(--o-font-display); margin: 0; }
+  .lede { color: var(--o-text-dim); font-size: 16px; max-width: 30em; margin: 0; }
+  .when { font: 500 15px/1.6 var(--o-font-mono); }
+  .when b { display: block; font-size: 28px; font-weight: 500; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: auto; }
+  .plot { position: relative; overflow: hidden; }
+  .plot svg { width: 100%; height: 100%; display: block; }
+  .plot text { font: 400 12px var(--o-font-mono); fill: var(--o-text-dim); }
+  .plot .strong { fill: var(--o-text); font-size: 13px; }
+  .sat { offset-path: path("M 450 140 A 290 220 0 1 1 449.9 140"); animation: fly 24s linear infinite; }
+  @keyframes fly { to { offset-distance: 100%; } }
+  @media (max-width: 860px) {
+    .sheet { grid-template-columns: 1fr; margin: 8px; }
+    .copy { border-right: 0; border-bottom: 1px solid var(--o-line-strong); padding: 24px; }
+    .plot { height: 360px; }
+  }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <section class="copy">
+      <dl class="titleblock">
+        <dt>任务</dt><dd>XY-07 雁阵</dd>
+        <dt>图号</dt><dd>ORB-0718-A</dd>
+        <dt>比例</dt><dd>示意 · 不按比例</dd>
+      </dl>
+      <h1>12 颗卫星，<br><span style="white-space:nowrap">一条晨昏线</span></h1>
+      <p class="lede">星砚航天第七次发射。火箭在 550 公里高度分三批释放载荷，每批间隔 94 秒，最终沿同一轨道面均匀排开。</p>
+      <p class="when"><span class="o-label">发射窗口 · UTC</span><b>10 月 18 日 02:14</b>窗口 11 分钟 · 酒泉 9A 工位</p>
+      <div class="cta">
+        <a class="o-btn o-btn--primary" href="#">观看直播</a>
+        <a class="o-btn" href="#">发射前 10 分钟提醒我</a>
+      </div>
+    </section>
+
+    <section class="plot o-grid-bg" aria-label="轨道示意图">
+      <svg viewBox="0 0 740 620" preserveAspectRatio="xMidYMid meet">
+        <!-- 地球 -->
+        <circle cx="450" cy="360" r="120" fill="none" stroke="var(--o-line-strong)" stroke-width="1.5"/>
+        <path d="M 330 360 A 120 40 0 0 0 570 360" fill="none" stroke="var(--o-line)" />
+        <line x1="450" y1="210" x2="450" y2="510" stroke="var(--o-line)" stroke-dasharray="2 4"/>
+        <!-- 转移轨迹（已飞） -->
+        <path d="M 400 248 C 360 200, 300 190, 210 260" fill="none" stroke="var(--o-text)" stroke-width="1.5"/>
+        <!-- 目标轨道（未来） -->
+        <ellipse cx="450" cy="360" rx="290" ry="220" fill="none" stroke="var(--o-text)" stroke-dasharray="6 6" stroke-width="1"/>
+        <!-- 三批分离点 -->
+        <g fill="var(--o-bg)" stroke="var(--o-text)" stroke-width="1.5">
+          <circle cx="210" cy="260" r="6"/><circle cx="168" cy="380" r="6"/><circle cx="214" cy="482" r="6"/>
+        </g>
+        <g>
+          <line x1="210" y1="260" x2="120" y2="218" stroke="var(--o-line-strong)"/>
+          <text x="40" y="190" class="strong">第一批 · 4 颗</text><text x="40" y="208">T+00:52:10</text>
+          <line x1="168" y1="380" x2="60" y2="380" stroke="var(--o-line-strong)"/>
+          <text x="20" y="372" class="strong">第二批</text><text x="20" y="398">+94 s</text>
+          <line x1="214" y1="482" x2="100" y2="560" stroke="var(--o-line-strong)"/>
+          <text x="40" y="578" class="strong">第三批</text><text x="40" y="596">+188 s</text>
+        </g>
+        <!-- 尺寸标注 -->
+        <line x1="450" y1="360" x2="740" y2="360" stroke="var(--o-line-strong)"/>
+        <text x="600" y="350">h = 550 km</text>
+        <text x="600" y="380">i = 97.6°</text>
+        <rect class="sat" width="8" height="8" x="-4" y="-4" fill="var(--o-signal)"/>
+      </svg>
+    </section>
+  </div>
+</body>
+</html>

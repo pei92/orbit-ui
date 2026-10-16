@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="mission">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>跑步记录 · 任务控制台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  /* 一次跑步 = 一次任务的飞行数据回放 */
+  body { min-height: 100vh; }
+  .outer { padding: 20px clamp(16px, 3vw, 32px) 40px; }
+  .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 1px; background: var(--o-line); border: 1px solid var(--o-line); }
+  .wrap > * { background: var(--o-bg); }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 4px; flex-wrap: wrap; }
+  header b { font: 600 18px/1.3 var(--o-font-body); }
+  header small { display: block; color: var(--o-text-dim); font: 400 13px/1.4 var(--o-font-mono); }
+  .kpis { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 1px; background: var(--o-line); }
+  .kpis > div { background: var(--o-bg); padding: 20px; display: grid; gap: 6px; align-content: start; }
+  .big { font: 700 clamp(48px, 7vw, 88px)/.95 var(--o-font-mono); color: var(--o-accent); font-variant-numeric: tabular-nums; letter-spacing: -.03em; text-shadow: var(--o-glow); }
+  .big small { font-size: 18px; font-weight: 500; color: var(--o-text-dim); text-shadow: none; letter-spacing: 0; margin-left: 6px; }
+  .kpis b { font: 500 28px/1.1 var(--o-font-mono); font-variant-numeric: tabular-nums; }
+  .kpis b small { font-size: 13px; color: var(--o-text-dim); margin-left: 4px; font-weight: 400; }
+  .main { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 1px; background: var(--o-line); }
+  .main > section { background: var(--o-bg); padding: 20px; }
+  h2 { font: 500 13px/1 var(--o-font-mono); color: var(--o-text-dim); margin: 0 0 16px; display: flex; justify-content: space-between; }
+  .route svg { width: 100%; height: auto; display: block; }
+  .route text { font: 400 11px var(--o-font-mono); fill: var(--o-text-dim); }
+  .hr svg { width: 100%; height: 120px; display: block; margin-bottom: 18px; }
+  .zones { display: grid; gap: 10px; }
+  .zones div { display: grid; grid-template-columns: 76px 1fr 64px; gap: 12px; align-items: center; font-size: 14px; }
+  .zones span:last-child { text-align: right; font: 400 13px var(--o-font-mono); color: var(--o-text-dim); font-variant-numeric: tabular-nums; }
+  .zones .o-gauge { height: 6px; background: var(--o-surface-2); }
+  .splits { overflow-x: auto; }
+  .fast { color: var(--o-signal); }
+  @media (max-width: 860px) {
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .kpis > div:first-child, .kpis > div:last-child { grid-column: 1 / -1; }
+    .main { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="o-grid-bg">
+<div class="outer"><div class="wrap">
+  <header>
+    <div><b>西湖环线晨跑</b><small>10 月 16 日 06:42 · 晴 14°C · 东北风 2 级</small></div>
+    <span class="o-status o-status--nominal">本周目标 30 km · 已完成 24.6</span>
+  </header>
+
+  <div class="kpis">
+    <div><span class="o-label">距离</span><div class="big">10.24<small>km</small></div></div>
+    <div><span class="o-label">用时</span><b>53:18</b></div>
+    <div><span class="o-label">平均配速</span><b>5'12"<small>/km</small></b></div>
+    <div><span class="o-label">平均心率</span><b>152<small>bpm</small></b></div>
+  </div>
+
+  <div class="main">
+    <section class="route">
+      <h2><span>路线</span><span>累计爬升 38 m</span></h2>
+      <svg viewBox="0 0 520 300" aria-label="跑步路线，起点断桥，终点同一位置">
+        <path d="M 90 230 C 60 170 80 90 150 70 S 300 40 360 60 S 470 110 460 170 S 400 260 300 262 S 140 270 90 230 Z" fill="none" stroke="var(--o-accent)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M 30 150 C 160 140 330 150 500 130" fill="none" stroke="var(--o-line)" stroke-width="6"/>
+        <g fill="var(--o-bg)" stroke="var(--o-accent)" stroke-width="1.5">
+          <circle cx="150" cy="70" r="4"/><circle cx="360" cy="60" r="4"/><circle cx="460" cy="170" r="4"/><circle cx="300" cy="262" r="4"/>
+        </g>
+        <circle cx="90" cy="230" r="7" fill="var(--o-accent)"/>
+        <text x="150" y="56" text-anchor="middle">2 km</text><text x="360" y="46" text-anchor="middle">4 km</text>
+        <text x="474" y="174">6 km</text><text x="300" y="284" text-anchor="middle">8 km</text>
+        <text x="104" y="250">起点 / 终点 · 断桥</text>
+      </svg>
+    </section>
+    <section class="hr">
+      <h2><span>心率</span><span>最高 176 bpm</span></h2>
+      <svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-label="心率曲线，起步 118，第 8 公里达到最高 176">
+        <line x1="0" y1="40" x2="400" y2="40" stroke="var(--o-line)" stroke-dasharray="3 5"/>
+        <polyline fill="none" stroke="var(--o-accent)" stroke-width="1.5" vector-effect="non-scaling-stroke"
+          points="0,96 20,80 40,66 60,58 80,56 100,54 120,52 140,55 160,50 180,48 200,47 220,49 240,44 260,42 280,38 300,30 320,22 340,26 360,34 380,40 400,44"/>
+      </svg>
+      <div class="zones">
+        <div><span>Z2 有氧</span><div class="o-gauge" style="--v:18"></div><span>9:36</span></div>
+        <div><span>Z3 节奏</span><div class="o-gauge" style="--v:52"></div><span>27:42</span></div>
+        <div><span>Z4 乳酸阈</span><div class="o-gauge" style="--v:26"></div><span>13:51</span></div>
+        <div><span>Z5 最大</span><div class="o-gauge" style="--v:4"></div><span>2:09</span></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="splits" style="padding:20px">
+    <h2><span>分段</span><span>最快一公里 4'48"</span></h2>
+    <table class="o-table">
+      <thead><tr><th>公里</th><th class="num">配速</th><th class="num">心率</th><th class="num">步频</th><th class="num">爬升</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="num">5'31"</td><td class="num">134</td><td class="num">172</td><td class="num">+2 m</td></tr>
+        <tr><td>2</td><td class="num">5'18"</td><td class="num">146</td><td class="num">176</td><td class="num">+6 m</td></tr>
+        <tr><td>3</td><td class="num">5'14"</td><td class="num">150</td><td class="num">177</td><td class="num">+11 m</td></tr>
+        <tr><td>4</td><td class="num">5'16"</td><td class="num">151</td><td class="num">176</td><td class="num">−4 m</td></tr>
+        <tr><td>8</td><td class="num fast">4'48"</td><td class="num">171</td><td class="num">184</td><td class="num">+3 m</td></tr>
+        <tr><td>10.24</td><td class="num">5'02"</td><td class="num">163</td><td class="num">181</td><td class="num">0 m</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div></div>
+</body>
+</html>

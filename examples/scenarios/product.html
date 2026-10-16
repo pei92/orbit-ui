@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="blueprint">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>商品详情 · 轨道蓝图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  /* 商品 = 工程图纸：卖点不是口号，是标注在实物上的尺寸和参数 */
+  :root { --o-font-mono: "IBM Plex Mono", Consolas, monospace; }
+  body { min-height: 100vh; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px clamp(16px, 3vw, 40px); border-bottom: 1px solid var(--o-line); font-size: 14px; }
+  .top b { font: 600 16px/1 var(--o-font-display); }
+  .top nav { display: flex; gap: 20px; color: var(--o-text-dim); }
+  .crumb { padding: 14px clamp(16px, 3vw, 40px); color: var(--o-text-dim); font-size: 13px; }
+  .page { display: grid; grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr); border-top: 1px solid var(--o-line-strong); border-bottom: 1px solid var(--o-line-strong); }
+  .drawing { position: relative; border-right: 1px solid var(--o-line-strong); min-height: 560px; }
+  .drawing svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .drawing text { font: 400 13px var(--o-font-mono); fill: var(--o-text-dim); }
+  .drawing .v { fill: var(--o-text); font-size: 15px; font-weight: 500; }
+  .views { position: absolute; left: 20px; bottom: 20px; display: flex; gap: 8px; }
+  .views button { width: 56px; height: 44px; border: 1px solid var(--o-line); background: var(--o-surface); color: var(--o-text-dim); font: 400 12px var(--o-font-mono); cursor: pointer; }
+  .views [aria-pressed="true"] { border-color: var(--o-text); color: var(--o-text); }
+  .buy { padding: 32px clamp(20px, 3vw, 40px); display: grid; gap: 22px; align-content: start; }
+  h1 { font: 600 clamp(26px, 2.6vw, 34px)/1.25 var(--o-font-display); margin: 0; }
+  .sub { margin: 6px 0 0; color: var(--o-text-dim); }
+  .rate { font: 400 14px/1 var(--o-font-mono); color: var(--o-text-dim); }
+  .rate b { color: var(--o-text); font-weight: 500; }
+  .price { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .price b { font: 500 40px/1 var(--o-font-mono); font-variant-numeric: tabular-nums; }
+  .price s { color: var(--o-text-dim); font: 400 15px var(--o-font-mono); }
+  .price span { border: 1px solid var(--o-signal); color: var(--o-signal); font-size: 13px; padding: 3px 8px; }
+  .opt { display: grid; gap: 10px; }
+  .opt .o-label { font-family: var(--o-font-body); }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .swatches button { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--o-line); background: transparent; color: var(--o-text); font: 400 14px var(--o-font-body); cursor: pointer; }
+  .swatches i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--o-line-strong); }
+  .swatches [aria-pressed="true"] { border-color: var(--o-text); box-shadow: inset 0 0 0 1px var(--o-text); }
+  .qty { display: inline-flex; border: 1px solid var(--o-line-strong); width: max-content; }
+  .qty button { width: 40px; height: 40px; background: none; border: 0; color: var(--o-text); font-size: 18px; cursor: pointer; }
+  .qty output { width: 48px; display: grid; place-items: center; font: 500 15px var(--o-font-mono); border-left: 1px solid var(--o-line); border-right: 1px solid var(--o-line); }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .actions .o-btn { justify-content: center; min-height: 48px; }
+  .ship { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14px; margin: 0; padding-top: 18px; border-top: 1px solid var(--o-line); }
+  .ship dt { color: var(--o-text-dim); }
+  .ship dd { margin: 0; }
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; }
+    .drawing { border-right: 0; border-bottom: 1px solid var(--o-line-strong); min-height: 0; aspect-ratio: 1 / 1; }
+    .top nav { display: none; }
+  }
+</style>
+</head>
+<body>
+  <header class="top"><b>静界声学</b><nav><span>耳机</span><span>音箱</span><span>配件</span><span>购物车 (1)</span></nav></header>
+  <div class="crumb">耳机 / 头戴式 / 静界 Pro 2</div>
+  <div class="page">
+    <section class="drawing o-grid-bg" aria-label="产品尺寸与参数标注图">
+      <svg viewBox="0 0 700 600" aria-hidden="true">
+        <g fill="none" stroke="var(--o-text)" stroke-width="1.5" stroke-linecap="round">
+          <!-- 头梁 -->
+          <path d="M 220 330 C 220 150, 480 150, 480 330"/>
+          <path d="M 236 330 C 236 172, 464 172, 464 330" stroke="var(--o-line-strong)" stroke-width="1"/>
+          <!-- 耳罩 -->
+          <rect x="182" y="310" width="76" height="140" rx="34"/>
+          <rect x="442" y="310" width="76" height="140" rx="34"/>
+          <rect x="196" y="326" width="48" height="108" rx="22" stroke="var(--o-line-strong)" stroke-width="1"/>
+          <rect x="456" y="326" width="48" height="108" rx="22" stroke="var(--o-line-strong)" stroke-width="1"/>
+        </g>
+        <!-- 尺寸线：宽度 -->
+        <g stroke="var(--o-line-strong)" stroke-width="1">
+          <line x1="182" y1="490" x2="518" y2="490"/><line x1="182" y1="482" x2="182" y2="498"/><line x1="518" y1="482" x2="518" y2="498"/>
+          <line x1="580" y1="185" x2="580" y2="450"/><line x1="572" y1="185" x2="588" y2="185"/><line x1="572" y1="450" x2="588" y2="450"/>
+        </g>
+        <text x="350" y="515" text-anchor="middle">178 mm</text>
+        <text x="596" y="322">196 mm</text>
+        <!-- 引线：线从圆心出发，圆后画盖住线头 -->
+        <g stroke="var(--o-line-strong)" stroke-width="1" fill="none">
+          <polyline points="350,173 350,90 420,90"/>
+          <polyline points="220,380 120,380 120,250 60,250"/>
+          <polyline points="480,400 620,400 620,520"/>
+        </g>
+        <g fill="var(--o-bg)" stroke="var(--o-text)" stroke-width="1.5">
+          <circle cx="350" cy="173" r="5"/><circle cx="220" cy="380" r="5"/><circle cx="480" cy="400" r="5"/>
+        </g>
+        <text x="428" y="86" class="v">254 g</text><text x="428" y="104">整机重量</text>
+        <text x="40" y="236" class="v">−42 dB</text><text x="40" y="272">自适应降噪深度</text>
+        <text x="560" y="544" class="v">38 小时</text><text x="560" y="562">续航（降噪开启）</text>
+      </svg>
+      <div class="views" role="group" aria-label="视图">
+        <button aria-pressed="true">正视</button><button aria-pressed="false">侧视</button><button aria-pressed="false">实拍</button>
+      </div>
+    </section>
+
+    <section class="buy">
+      <div>
+        <h1>静界 Pro 2 头戴式降噪耳机</h1>
+        <p class="sub">通勤地铁里也能听清人声播客的那副耳机</p>
+      </div>
+      <span class="rate"><b>4.8</b> · 2,316 条评价 · 近 30 天售出 4,072</span>
+      <div class="price"><b>¥1,299</b><s>¥1,599</s><span>双 11 预售 · 定金 ¥100</span></div>
+      <div class="opt">
+        <span class="o-label">颜色 · 雾灰</span>
+        <div class="swatches">
+          <button aria-pressed="true"><i style="background:#9ba3ad"></i>雾灰</button>
+          <button aria-pressed="false"><i style="background:#1e2126"></i>曜黑</button>
+          <button aria-pressed="false"><i style="background:#e7e0d2"></i>燕麦白</button>
+        </div>
+      </div>
+      <div class="opt">
+        <span class="o-label">数量</span>
+        <div class="qty"><button aria-label="减少">−</button><output>1</output><button aria-label="增加">＋</button></div>
+      </div>
+      <div class="actions">
+        <button class="o-btn">加入购物车</button>
+        <button class="o-btn o-btn--primary">立即购买</button>
+      </div>
+      <dl class="ship">
+        <dt>配送</dt><dd>上海仓发货 · 现在下单，明天（10 月 17 日）送达</dd>
+        <dt>服务</dt><dd>7 天无理由退货 · 2 年保修</dd>
+      </dl>
+    </section>
+  </div>
+<script>
+  document.querySelectorAll(".swatches button, .views button").forEach(b => b.onclick = () => {
+    b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    if (b.closest(".swatches")) document.querySelector(".opt .o-label").textContent = "颜色 · " + b.textContent;
+  });
+  let n = 1; const out = document.querySelector(".qty output");
+  document.querySelectorAll(".qty button").forEach((b, i) => b.onclick = () => { n = Math.max(1, Math.min(5, n + (i ? 1 : -1))); out.textContent = n; });
+</script>
+</body>
+</html>

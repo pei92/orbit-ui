@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "project": "星砚航天 XY-07 发射页",
+  "brief": "12 颗遥感卫星拼车发射的直播落地页：首屏让访客知道何时发射、能否观看，并订阅提醒",
+  "round": "01",
+  "candidates": [
+    {
+      "id": "mission",
+      "name": "任务控制台",
+      "concept": "像坐在控制室里，盯着唯一一个会决定发射的数字",
+      "typography": "JetBrains Mono 700 超大倒计时 / Inter 正文 15px / 等宽读数 20px",
+      "palette": [
+        "#07090c",
+        "#ffb547",
+        "#5be3b0",
+        "#e9e4d8"
+      ],
+      "traits": [
+        "三栏密集网格",
+        "倒计时占首屏中心",
+        "检查清单带状态灯",
+        "坐标网格底"
+      ],
+      "source": "mission.html"
+    },
+    {
+      "id": "blueprint",
+      "name": "轨道蓝图",
+      "concept": "把这次发射画成一张工程图纸：读懂卫星会去哪里",
+      "typography": "Space Grotesk 600 标题 / IBM Plex Mono 标注 12–15px",
+      "palette": [
+        "#0a1a3a",
+        "#f1f5ff",
+        "#7fe7ff",
+        "#a9b8dc"
+      ],
+      "traits": [
+        "左文右图",
+        "SVG 轨道与分离点标注",
+        "图纸标题栏",
+        "单色白线"
+      ],
+      "source": "blueprint.html"
+    },
+    {
+      "id": "deepfield",
+      "name": "深空",
+      "concept": "安静到只剩一道晨光，让人想起为什么要去太空",
+      "typography": "Space Grotesk 300 大标题 104px / JetBrains Mono 小号读数",
+      "palette": [
+        "#020205",
+        "#f4f3ff",
+        "#a98bff",
+        "#8d8ba6"
+      ],
+      "traits": [
+        "行星边缘作分区线",
+        "Canvas 视差星点",
+        "大留白居中",
+        "唯一发光是大气层"
+      ],
+      "source": "deepfield.html"
+    },
+    {
+      "id": "frontier",
+      "name": "星际拓荒",
+      "concept": "像在飞船舷窗边打开任务日志：星球就在眼前，下一步只差按一个键",
+      "typography": "Jost 300 大标题 76px / Barlow 正文 16px / Barlow Semi Condensed 读数",
+      "palette": [
+        "#0b0d10",
+        "#eceae2",
+        "#2b5c9e",
+        "#d6402b",
+        "#ec7d2a",
+        "#f2b33d"
+      ],
+      "traits": [
+        "星球占半屏、引线标注",
+        "刻度环倒计时",
+        "任务目标清单",
+        "选中反白 + 按键提示",
+        "四色涂装条"
+      ],
+      "source": "frontier.html"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="frontier">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日常业务场景 · Orbit UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 32px clamp(16px, 3vw, 40px) 64px; }
+  header { display: grid; gap: 12px; margin-bottom: 32px; }
+  h1 { font: 300 clamp(32px, 4vw, 52px)/1.2 var(--o-font-display); margin: 0; }
+  header p { margin: 0; color: var(--o-text-dim); max-width: 44em; font-size: 16px; }
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+  .card { border: 1px solid var(--o-line); border-radius: 3px; overflow: hidden; display: flex; flex-direction: column; background: var(--o-surface); }
+  .stage { position: relative; overflow: hidden; background: #000; border-bottom: 1px solid var(--o-line); }
+  .stage iframe { position: absolute; top: 0; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .meta { padding: 16px 18px 18px; display: grid; gap: 8px; flex: 1; }
+  .meta h2 { margin: 0; font: 500 18px/1.3 var(--o-font-body); display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .meta h2 small { font: 500 12px/1 var(--o-font-mono); color: var(--o-text-dim); white-space: nowrap; }
+  .meta p { margin: 0; color: var(--o-text-dim); font-size: 14px; }
+  .map { font: 500 13px/1.6 var(--o-font-mono); color: var(--o-text); }
+  .meta a { margin-top: auto; justify-self: start; color: var(--o-text); font-size: 14px; text-underline-offset: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="o-stripe" style="--w:64px" aria-hidden="true"></span>
+    <h1>不只是太空：日常业务里的太空科技感</h1>
+    <p>把一个日常场景翻译成“仪器”：订单是任务，路线是轨道，余额是主读数，设备是舱段。<span style="white-space:nowrap">每页只挑一个方向</span>，只在一两处用太空语言，其余照常好用。</p>
+    <div class="controls">
+      <div class="o-tabs" role="tablist" aria-label="预览尺寸">
+        <button role="tab" aria-selected="true" data-device="desktop">桌面</button>
+        <button role="tab" aria-selected="false" data-device="mobile">手机</button>
+      </div>
+      <a class="o-btn" href="../launch-page/style-explorer.html">看太空发射页的四个方向 →</a>
+    </div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+  const pages = [
+    { file: "delivery.html", name: "外卖订单追踪", dir: "星际拓荒", desc: "用户只关心“还要多久、人在哪”。", map: "配送路线 = 轨道 · 骑手 = 卫星 · 送达时间 = 刻度环倒计时" },
+    { file: "smart-home.html", name: "智能家居", dir: "星际拓荒", desc: "全屋 21 台设备，一眼看到哪个房间不对劲。", map: "房间 = 舱段（反白选中）· 设备 = 开关 · 异常 = 状态灯" },
+    { file: "wallet.html", name: "个人账户", dir: "深空", desc: "余额是唯一亮着的东西，交易记录退到暗处。", map: "余额 = 主读数 · 预算 = 刻度环 · 分类 = 刻度条" },
+    { file: "product.html", name: "电商商品详情", dir: "轨道蓝图", desc: "卖点不写口号，标在实物图上。", map: "商品 = 工程图纸 · 卖点 = 引线标注 · 尺寸 = 尺寸线" },
+    { file: "fitness.html", name: "跑步记录", dir: "任务控制台", desc: "一次晨跑就是一次飞行数据回放。", map: "距离 = 主读数 · 路线 = 轨迹 · 分段 = 遥测表" },
+    { file: "admin.html", name: "门店运营看板", dir: "任务控制台", desc: "42 家店，异常的那几家要自己浮上来。", map: "门店 = 舰队 · 营业额 = 主读数 · 告警 = 状态灯三重表达" },
+  ];
+  const VIEW = { desktop: [1280, 800], mobile: [390, 844] };
+  let device = "desktop";
+  const grid = document.getElementById("grid");
+  const cards = pages.map(p => {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.innerHTML = `<div class="stage"><iframe loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+      <div class="meta"><h2><span></span><small></small></h2><p class="desc"></p><p class="map"></p><a>打开页面 →</a></div>`;
+    card.querySelector("iframe").src = p.file;
+    card.querySelector("h2 span").textContent = p.name;
+    card.querySelector("h2 small").textContent = p.dir;
+    card.querySelector(".desc").textContent = p.desc;
+    card.querySelector(".map").textContent = p.map;
+    card.querySelector("a").href = p.file;
+    grid.appendChild(card);
+    return card;
+  });
+  function layout() {
+    const [w, h] = VIEW[device];
+    for (const card of cards) {
+      const stage = card.querySelector(".stage"), f = card.querySelector("iframe");
+      const sw = stage.clientWidth;
+      const boxH = device === "mobile" ? 420 : sw * h / w;
+      const scale = Math.min(sw / w, boxH / h);
+      Object.assign(f.style, { width: w + "px", height: h + "px", transform: `scale(${scale})`, left: (sw - w * scale) / 2 + "px" });
+      stage.style.height = boxH + "px";
+    }
+  }
+  document.querySelectorAll("[data-device]").forEach(b => b.onclick = () => {
+    device = b.dataset.device;
+    document.querySelectorAll("[data-device]").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+    layout();
+  });
+  new ResizeObserver(layout).observe(grid);
+</script>
+</body>
+</html>

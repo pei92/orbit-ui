@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="frontier">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>智能家居 · 星际拓荒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  /* 家 = 飞船舱段：左侧舱段列表反白选中，右侧是这个舱的仪表 */
+  body { min-height: 100vh; }
+  .app { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100vh; }
+  nav { border-right: 1px solid var(--o-line); padding: 24px 16px; display: grid; gap: 24px; align-content: start; }
+  .brand { display: grid; gap: 8px; padding: 0 8px; }
+  .brand b { font: 500 16px/1 var(--o-font-display); }
+  .brand small { color: var(--o-text-dim); font-size: 13px; }
+  .scenes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .scenes .o-btn { justify-content: center; padding: 0 8px; }
+  .label { font: 600 13px/1 var(--o-font-body); color: var(--o-text-dim); padding: 0 8px 10px; }
+
+  main { padding: 28px clamp(16px, 3vw, 40px) 40px; display: grid; gap: 20px; align-content: start; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+  h1 { font: 300 clamp(30px, 3.4vw, 44px)/1.15 var(--o-font-display); margin: 0; }
+  .head p { margin: 6px 0 0; color: var(--o-text-dim); }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); }
+  .o-panel { padding: 20px; }
+  .o-panel h2 { margin: 0 0 16px; font: 600 13px/1 var(--o-font-body); color: var(--o-text-dim); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .climate { grid-column: span 5; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  .climate .o-arc { --size: 168px; --v: 82; }
+  .temp { text-align: center; }
+  .temp b { display: block; font: 400 44px/1 var(--o-font-display); font-variant-numeric: tabular-nums; }
+  .temp span { color: var(--o-text-dim); font-size: 13px; }
+  .climate dl { margin: 0; display: grid; gap: 12px; font-size: 14px; }
+  .climate dt { color: var(--o-text-dim); font-size: 13px; }
+  .climate dd { margin: 2px 0 0; font: 500 18px/1.2 var(--o-font-mono); font-variant-numeric: tabular-nums; }
+  .stepper { display: flex; gap: 8px; margin-top: 4px; }
+  .stepper .o-btn { min-height: 36px; padding: 0 14px; }
+  .devices { grid-column: span 7; }
+  .dev { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--o-line); }
+  .dev:last-child { border-bottom: 0; }
+  .dev div { flex: 1; min-width: 0; }
+  .dev b { display: block; font-weight: 500; }
+  .dev small { color: var(--o-text-dim); font: 500 13px/1.4 var(--o-font-mono); font-variant-numeric: tabular-nums; }
+  .energy { grid-column: span 8; }
+  .energy svg { width: 100%; height: 140px; display: block; }
+  .energy text { font: 500 11px var(--o-font-mono); fill: var(--o-text-dim); }
+  .alerts { grid-column: span 4; }
+  .alerts ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .alerts li { display: grid; gap: 4px; font-size: 14px; }
+  .alerts small { color: var(--o-text-dim); font-size: 13px; padding-left: 14px; }
+  @media (max-width: 1100px) {
+    .climate, .devices, .energy, .alerts { grid-column: span 12; }
+  }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    nav { border-right: 0; border-bottom: 1px solid var(--o-line); padding: 16px; }
+    nav .o-list { display: flex; overflow-x: auto; gap: 4px; }
+    nav .o-list button { white-space: nowrap; }
+    nav .o-list small { display: none; }
+    .scenes-block { display: none; }
+    .climate { grid-template-columns: 1fr; justify-items: center; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav>
+    <div class="brand">
+      <span class="o-stripe" style="--w:48px" aria-hidden="true"></span>
+      <b>翠湖苑 3-1102</b>
+      <small>21 台设备在线 · 1 台离线</small>
+    </div>
+    <div>
+      <div class="label">房间</div>
+      <ul class="o-list">
+        <li><button aria-current="true">客厅<small>24.5°</small></button></li>
+        <li><button>主卧<small>23.0°</small></button></li>
+        <li><button>儿童房<small>24.0°</small></button></li>
+        <li><button>书房<small>25.5°</small></button></li>
+        <li><button>厨房<small>26.1°</small></button></li>
+      </ul>
+    </div>
+    <div class="scenes-block">
+      <div class="label">场景</div>
+      <div class="scenes">
+        <button class="o-btn">回家</button>
+        <button class="o-btn">离家</button>
+        <button class="o-btn">观影</button>
+        <button class="o-btn">睡眠</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="head">
+      <div>
+        <h1>客厅</h1>
+        <p>3 盏灯开着，空调制冷中，窗户已关</p>
+      </div>
+      <span class="o-status o-status--nominal">全屋安防已开启</span>
+    </div>
+
+    <div class="grid">
+      <section class="o-panel climate">
+        <div class="o-arc" role="img" aria-label="室温 24.5 度，目标 25 度">
+          <div class="temp"><b>24.5°</b><span>目标 25°</span></div>
+        </div>
+        <dl>
+          <div><dt>空调</dt><dd>制冷 · 自动风</dd></div>
+          <div><dt>湿度</dt><dd>48%</dd></div>
+          <div><dt>PM2.5</dt><dd>12 μg/m³</dd></div>
+          <div class="stepper" role="group" aria-label="调节目标温度">
+            <button class="o-btn" aria-label="调低 0.5 度">−</button>
+            <button class="o-btn" aria-label="调高 0.5 度">＋</button>
+          </div>
+        </dl>
+      </section>
+
+      <section class="o-panel devices">
+        <h2><span>设备</span><span>7 台</span></h2>
+        <div class="dev"><div><b>主灯</b><small>暖白 3000K · 亮度 80%</small></div><input type="checkbox" class="o-switch" checked aria-label="主灯"></div>
+        <div class="dev"><div><b>电视背景灯带</b><small>亮度 35%</small></div><input type="checkbox" class="o-switch" checked aria-label="电视背景灯带"></div>
+        <div class="dev"><div><b>落地灯</b><small>亮度 60%</small></div><input type="checkbox" class="o-switch" checked aria-label="落地灯"></div>
+        <div class="dev"><div><b>电动窗帘</b><small>开合 0%</small></div><input type="checkbox" class="o-switch" aria-label="电动窗帘"></div>
+        <div class="dev"><div><b>扫地机器人</b><small>回充中 · 电量 64%</small></div><input type="checkbox" class="o-switch" aria-label="扫地机器人"></div>
+      </section>
+
+      <section class="o-panel energy">
+        <h2><span>今日用电</span><span class="o-mono" style="color:var(--o-text)">6.82 kWh · 约 ¥ 3.75</span></h2>
+        <svg viewBox="0 0 600 140" preserveAspectRatio="none" aria-label="今日 0 点到现在的每小时用电">
+          <line x1="0" y1="120" x2="600" y2="120" stroke="var(--o-line-strong)"/>
+          <g fill="var(--o-line-strong)">
+            <rect x="8" y="104" width="14" height="16"/><rect x="33" y="108" width="14" height="12"/><rect x="58" y="110" width="14" height="10"/>
+            <rect x="83" y="110" width="14" height="10"/><rect x="108" y="109" width="14" height="11"/><rect x="133" y="106" width="14" height="14"/>
+            <rect x="158" y="88" width="14" height="32"/><rect x="183" y="74" width="14" height="46"/><rect x="208" y="96" width="14" height="24"/>
+            <rect x="233" y="100" width="14" height="20"/><rect x="258" y="98" width="14" height="22"/><rect x="283" y="84" width="14" height="36"/>
+            <rect x="308" y="80" width="14" height="40"/><rect x="333" y="90" width="14" height="30"/><rect x="358" y="70" width="14" height="50"/>
+            <rect x="383" y="56" width="14" height="64"/><rect x="408" y="44" width="14" height="76"/><rect x="433" y="38" width="14" height="82"/>
+          </g>
+          <rect x="458" y="22" width="14" height="98" fill="var(--o-accent)"/>
+          <text x="8" y="136">0:00</text><text x="200" y="136">8:00</text><text x="400" y="136">16:00</text><text x="448" y="16">18 时 0.84</text>
+        </svg>
+      </section>
+
+      <section class="o-panel alerts">
+        <h2><span>提醒</span><span>2</span></h2>
+        <ul>
+          <li><span class="o-status o-status--warn">厨房烟雾传感器电量低</span><small>剩余 12%，约可用 9 天</small></li>
+          <li><span class="o-status o-status--alert">阳台摄像头离线</span><small>今天 16:47 起无响应</small></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+  document.querySelectorAll(".o-list button").forEach(b => b.onclick = () => {
+    document.querySelectorAll(".o-list button").forEach(x => x.setAttribute("aria-current", String(x === b)));
+    document.querySelector("h1").textContent = b.firstChild.textContent;
+  });
+</script>
+</body>
+</html>

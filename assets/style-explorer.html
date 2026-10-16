@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  /* 对比页外壳刻意保持中性，不带任何候选方向的风格 */
+  :root {
+    --bg: #f4f4f2; --panel: #ffffff; --line: #dcdcd6; --text: #1d1d1b; --dim: #6b6b66;
+    --accent: #1d1d1b; --accent-ink: #ffffff; --ok: #1f7a4d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161616; --panel: #1f1f1f; --line: #333; --text: #ececea; --dim: #9a9a95; --accent: #ececea; --accent-ink: #161616; --ok: #6fd3a0; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.6 system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; padding: 12px 20px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  h1 { font-size: 16px; margin: 0; }
+  .brief { color: var(--dim); margin: 2px 0 0; max-width: 60ch; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .seg button { border: 0; background: var(--panel); color: var(--text); padding: 6px 12px; font: inherit; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  main { padding: 20px; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); }
+  main.single { grid-template-columns: 1fr; max-width: 1400px; margin: 0 auto; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+  .card[hidden] { display: none; }
+  .stage { position: relative; background: #000; overflow: hidden; }
+  .stage iframe, .stage img { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #fff; }
+  .stage img { object-fit: cover; object-position: top; }
+  .meta { padding: 14px 16px 16px; display: grid; gap: 6px; }
+  .title { display: flex; align-items: baseline; gap: 10px; }
+  .num { font: 600 12px/1 ui-monospace, Consolas, monospace; color: var(--dim); }
+  .name { font-size: 16px; font-weight: 600; margin: 0; }
+  .concept { margin: 0; }
+  .typo { margin: 0; color: var(--dim); font-size: 13px; }
+  .swatches { display: flex; gap: 4px; }
+  .swatches span { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--line); }
+  .traits { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .traits li { font-size: 12px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 99px; color: var(--dim); }
+  .actions { display: flex; gap: 8px; margin-top: 6px; }
+  .actions button { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; cursor: pointer; }
+  .actions .pick { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--accent); color: var(--accent-ink); padding: 10px 16px; border-radius: 6px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); }
+  .toast.show { opacity: 1; }
+  .hint { color: var(--dim); font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 id="title"></h1>
+    <p class="brief" id="brief"></p>
+  </div>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="查看方式">
+      <button data-view="grid" aria-pressed="true">并排</button>
+      <button data-view="single" aria-pressed="false">单张</button>
+    </div>
+    <div class="seg" role="group" aria-label="视口">
+      <button data-device="desktop" aria-pressed="true">桌面</button>
+      <button data-device="mobile" aria-pressed="false">手机</button>
+    </div>
+    <span class="hint">← → 翻页</span>
+  </div>
+</header>
+<main id="list"></main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const DATA = /*__ORBIT_DATA__*/null;
+const MOBILE = { width: 390, height: 844 };
+const state = { view: "grid", device: "desktop", index: 0 };
+const list = document.getElementById("list");
+
+document.getElementById("title").textContent = `${DATA.project} · 第 ${DATA.round} 轮`;
+document.getElementById("brief").textContent = DATA.brief;
+document.title = `${DATA.project} · 第 ${DATA.round} 轮方向对比`;
+
+const label = (c, i) => c.baseline ? "现状" : String(DATA.candidates.filter(x => !x.baseline).indexOf(c) + 1).padStart(2, "0");
+
+const cards = DATA.candidates.map((c, i) => {
+  const card = document.createElement("article");
+  card.className = "card";
+  const stage = document.createElement("div");
+  stage.className = "stage";
+  let frame;
+  if (c.image) {
+    frame = document.createElement("img");
+    frame.src = c.image;
+    frame.alt = c.name;
+  } else {
+    frame = document.createElement("iframe");
+    frame.title = c.name;
+    frame.setAttribute("sandbox", "allow-scripts");
+    frame.loading = "lazy";
+    frame.srcdoc = c.html;
+  }
+  stage.appendChild(frame);
+  card.appendChild(stage);
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.innerHTML = `
+    <div class="title"><span class="num"></span><h2 class="name"></h2></div>
+    <p class="concept"></p><p class="typo"></p>
+    <div class="swatches"></div><ul class="traits"></ul>
+    <div class="actions"><button class="open">单张查看</button><button class="pick">选择</button></div>`;
+  meta.querySelector(".num").textContent = label(c, i);
+  meta.querySelector(".name").textContent = c.name;
+  meta.querySelector(".concept").textContent = c.concept;
+  meta.querySelector(".typo").textContent = c.typography;
+  for (const hex of c.palette) {
+    const s = document.createElement("span");
+    s.style.background = hex; s.title = hex;
+    meta.querySelector(".swatches").appendChild(s);
+  }
+  for (const t of c.traits) {
+    const li = document.createElement("li"); li.textContent = t;
+    meta.querySelector(".traits").appendChild(li);
+  }
+  meta.querySelector(".open").onclick = () => { state.index = i; setView("single"); };
+  meta.querySelector(".pick").onclick = () => pick(c, i);
+  card.appendChild(meta);
+  list.appendChild(card);
+  return { card, stage, frame, c };
+});
+
+function viewportOf(c) {
+  if (c.viewport) return c.viewport;
+  return state.device === "mobile" ? MOBILE : DATA.defaultViewport;
+}
+
+function layout() {
+  for (const { stage, frame, c, card } of cards) {
+    if (card.hidden) continue;
+    const vp = viewportOf(c);
+    let w = stage.clientWidth;
+    let scale = w / vp.width;
+    if (state.device === "mobile" && !c.viewport) {
+      // 手机视口：按高度限制，居中摆放
+      const maxH = state.view === "single" ? Math.min(window.innerHeight - 120, vp.height) : 560;
+      scale = Math.min(1, maxH / vp.height, w / vp.width);
+    }
+    frame.style.width = vp.width + "px";
+    frame.style.height = vp.height + "px";
+    frame.style.transform = `scale(${scale})`;
+    frame.style.left = Math.max(0, (w - vp.width * scale) / 2) + "px";
+    stage.style.height = vp.height * scale + "px";
+  }
+}
+
+function setView(v) {
+  state.view = v;
+  list.classList.toggle("single", v === "single");
+  cards.forEach((x, i) => x.card.hidden = v === "single" && i !== state.index);
+  press("view", v);
+  layout();
+}
+function setDevice(d) { state.device = d; press("device", d); layout(); }
+function press(attr, val) {
+  document.querySelectorAll(`[data-${attr}]`).forEach(b => b.setAttribute("aria-pressed", String(b.dataset[attr] === val)));
+}
+document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => setView(b.dataset.view));
+document.querySelectorAll("[data-device]").forEach(b => b.onclick = () => setDevice(b.dataset.device));
+
+document.addEventListener("keydown", e => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  const n = cards.length;
+  state.index = (state.index + (e.key === "ArrowRight" ? 1 : n - 1)) % n;
+  setView("single");
+});
+
+async function pick(c, i) {
+  const text = `第 ${DATA.round} 轮：选 ${label(c, i)} ${c.name}`;
+  try { await navigator.clipboard.writeText(text); toast(`已复制：“${text}”，发给 Agent 继续`); }
+  catch { toast(`请手动复制：${text}`); }
+}
+let timer;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(timer); timer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+new ResizeObserver(layout).observe(list);
+layout();
+</script>
+</body>
+</html>

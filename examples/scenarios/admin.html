@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="mission">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>门店运营看板 · 任务控制台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  /* 连锁门店 = 一支舰队：每家店一行遥测，异常靠状态灯和排序浮上来 */
+  body { min-height: 100vh; }
+  .app { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
+  aside { border-right: 1px solid var(--o-line); padding: 20px 12px; display: grid; gap: 20px; align-content: start; }
+  .logo { padding: 0 10px; font: 700 15px/1.3 var(--o-font-mono); }
+  .logo small { display: block; font-weight: 400; color: var(--o-text-dim); font-size: 12px; }
+  .o-list button { font-size: 14px; padding: 9px 12px; }
+  main { padding: 20px clamp(16px, 2.5vw, 32px) 40px; display: grid; gap: 16px; align-content: start; }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  h1 { font: 600 22px/1.3 var(--o-font-body); margin: 0; }
+  .head small { color: var(--o-text-dim); font: 400 13px var(--o-font-mono); }
+  .tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .tools select { min-height: 40px; background: var(--o-bg); color: var(--o-text); border: 1px solid var(--o-line-strong); padding: 0 10px; font: 400 14px var(--o-font-body); }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--o-line); border: 1px solid var(--o-line); }
+  .kpis > div { background: var(--o-surface); padding: 16px 18px; display: grid; gap: 6px; }
+  .kpis b { font: 500 26px/1.1 var(--o-font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kpis .main-kpi b { color: var(--o-accent); font-size: 30px; }
+  .d { font: 400 13px var(--o-font-mono); color: var(--o-signal); }
+  .d.down { color: var(--o-alert); }
+  .row2 { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+  .o-panel { padding: 18px; }
+  .o-panel h2 { margin: 0 0 14px; font: 500 13px/1 var(--o-font-mono); color: var(--o-text-dim); display: flex; justify-content: space-between; gap: 12px; }
+  .chart svg { width: 100%; height: 190px; display: block; }
+  .chart text { font: 400 11px var(--o-font-mono); fill: var(--o-text-dim); }
+  .alerts ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; font-size: 14px; }
+  .alerts li { display: grid; gap: 4px; }
+  .alerts small { color: var(--o-text-dim); padding-left: 14px; font-size: 13px; }
+  .table-wrap { overflow-x: auto; }
+  .o-table td:first-child b { font-weight: 500; }
+  .o-table td:first-child small { display: block; color: var(--o-text-dim); font-size: 12px; }
+  @media (max-width: 1080px) { .row2 { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    aside { border-right: 0; border-bottom: 1px solid var(--o-line); padding: 12px; }
+    aside .o-list { display: flex; overflow-x: auto; }
+    aside .o-list button { white-space: nowrap; }
+    .logo { display: none; }
+    .kpis b, .kpis .main-kpi b { font-size: 21px; }
+    .kpis > div { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo">山岚咖啡<small>华东区 · 运营中台</small></div>
+    <ul class="o-list">
+      <li><button aria-current="true">实时看板</button></li>
+      <li><button>门店</button></li>
+      <li><button>商品与库存</button></li>
+      <li><button>会员</button></li>
+      <li><button>营销活动</button></li>
+      <li><button>报表导出</button></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div class="head">
+      <div><h1>今日实时看板</h1><small>10 月 16 日 周四 · 数据更新于 14:32:08</small></div>
+      <div class="tools">
+        <select aria-label="区域"><option>华东区（42 家）</option><option>上海（19 家）</option><option>杭州（14 家）</option></select>
+        <button class="o-btn">导出今日报表</button>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="main-kpi"><span class="o-label">营业额</span><b>¥ 86,412.30</b><span class="d">较上周四同时段 +6.83%</span></div>
+      <div><span class="o-label">订单数</span><b>3,217</b><span class="d">+4.21%</span></div>
+      <div><span class="o-label">客单价</span><b>¥ 26.86</b><span class="d">+2.50%</span></div>
+      <div><span class="o-label">退款率</span><b>0.42%</b><span class="d down">+0.11 pt</span></div>
+    </div>
+
+    <div class="row2">
+      <section class="o-panel chart">
+        <h2><span>每小时营业额</span><span>峰值 08:00–09:00 ¥ 14,206</span></h2>
+        <svg viewBox="0 0 640 190" preserveAspectRatio="none" aria-label="07 点到 14 点每小时营业额，8 点最高">
+          <line x1="0" y1="160" x2="640" y2="160" stroke="var(--o-line-strong)"/>
+          <line x1="0" y1="80" x2="640" y2="80" stroke="var(--o-line)" stroke-dasharray="3 5"/>
+          <g fill="var(--o-line-strong)">
+            <rect x="20" y="96" width="44" height="64"/><rect x="180" y="62" width="44" height="98"/><rect x="260" y="88" width="44" height="72"/>
+            <rect x="340" y="54" width="44" height="106"/><rect x="420" y="70" width="44" height="90"/><rect x="500" y="86" width="44" height="74"/>
+          </g>
+          <rect x="100" y="20" width="44" height="140" fill="var(--o-accent)"/>
+          <rect x="580" y="128" width="44" height="32" fill="none" stroke="var(--o-accent)" stroke-dasharray="3 3"/>
+          <text x="42" y="178" text-anchor="middle">07</text><text x="122" y="178" text-anchor="middle">08</text><text x="202" y="178" text-anchor="middle">09</text>
+          <text x="282" y="178" text-anchor="middle">10</text><text x="362" y="178" text-anchor="middle">11</text><text x="442" y="178" text-anchor="middle">12</text>
+          <text x="522" y="178" text-anchor="middle">13</text><text x="602" y="178" text-anchor="middle">14 进行中</text>
+          <text x="4" y="74">¥ 10,000</text>
+        </svg>
+      </section>
+      <section class="o-panel alerts">
+        <h2><span>需要处理</span><span>3</span></h2>
+        <ul>
+          <li><span class="o-status o-status--alert">静安寺店 燕麦奶库存不足</span><small>剩 6 盒，按当前销量约 1.5 小时售罄</small></li>
+          <li><span class="o-status o-status--warn">滨江天街店 出杯超时</span><small>近 30 分钟平均 7 分 42 秒，目标 5 分钟内</small></li>
+          <li><span class="o-status o-status--warn">西溪印象城店 差评 2 条</span><small>均提到“外卖杯盖漏洒”</small></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="o-panel table-wrap">
+      <h2><span>门店明细 · 按营业额排序</span><span>显示 5 / 42</span></h2>
+      <table class="o-table">
+        <thead><tr><th>门店</th><th class="num">营业额</th><th class="num">订单</th><th class="num">平均出杯</th><th class="num">外卖占比</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td><b>南京西路旗舰店</b><small>上海 · 店长 周婧</small></td><td class="num">¥ 6,842.10</td><td class="num">241</td><td class="num">3'58"</td><td class="num">31%</td><td><span class="o-status o-status--nominal">正常</span></td></tr>
+          <tr><td><b>静安寺店</b><small>上海 · 店长 何一帆</small></td><td class="num">¥ 5,917.40</td><td class="num">219</td><td class="num">4'21"</td><td class="num">27%</td><td><span class="o-status o-status--alert">缺货</span></td></tr>
+          <tr><td><b>滨江天街店</b><small>杭州 · 店长 沈佳怡</small></td><td class="num">¥ 4,736.80</td><td class="num">188</td><td class="num">7'42"</td><td class="num">46%</td><td><span class="o-status o-status--warn">出杯慢</span></td></tr>
+          <tr><td><b>西溪印象城店</b><small>杭州 · 店长 陆鸣</small></td><td class="num">¥ 4,102.50</td><td class="num">163</td><td class="num">4'40"</td><td class="num">52%</td><td><span class="o-status o-status--warn">差评</span></td></tr>
+          <tr><td><b>金鸡湖店</b><small>苏州 · 店长 王子晗</small></td><td class="num">¥ 3,688.00</td><td class="num">142</td><td class="num">4'05"</td><td class="num">22%</td><td><span class="o-status o-status--nominal">正常</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+</body>
+</html>

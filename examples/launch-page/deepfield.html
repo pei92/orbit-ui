@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN" data-orbit="deepfield">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XY-07 雁阵 · 深空</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="orbit.css">
+<style>
+  html, body { height: 100%; }
+  body { overflow: hidden; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+  /* 行星边缘：一束从左下打来的光，大气层是唯一的发光 */
+  .limb {
+    position: fixed; left: 50%; top: 74vh; width: 200vmax; height: 200vmax; transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 0%, #1a1630 0%, #07060d 18%, #020205 40%);
+    box-shadow: 0 -2px 0 rgba(200,190,255,.55), 0 -20px 60px rgba(169,139,255,.35), 0 -80px 160px rgba(120,90,255,.18);
+  }
+  .hero { position: relative; z-index: 1; height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding: 32px clamp(20px, 5vw, 64px); }
+  nav { display: flex; justify-content: space-between; align-items: center; font: 500 15px/1 var(--o-font-display); }
+  nav a { color: var(--o-text-dim); text-decoration: none; font-size: 14px; }
+  .center { align-self: center; text-align: center; display: grid; gap: 28px; justify-items: center; margin-top: -8vh; }
+  .eyebrow { font: 400 13px/1 var(--o-font-mono); color: var(--o-text-dim); letter-spacing: .1em; }
+  h1 { font: 300 clamp(40px, 7vw, 104px)/1.12 var(--o-font-display); margin: 0; letter-spacing: -.01em; }
+  h1 em { font-style: normal; font-weight: 500; color: var(--o-accent); }
+  .lede { color: var(--o-text-dim); max-width: 30em; margin: 0; font-size: 16px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .cta .o-btn { border-radius: 99px; clip-path: none; padding: 0 22px; min-height: 44px; }
+  .meta { display: flex; justify-content: center; gap: clamp(20px, 5vw, 64px); font: 400 13px/1.6 var(--o-font-mono); color: var(--o-text-dim); text-align: center; }
+  .meta b { display: block; color: var(--o-text); font-weight: 400; font-size: 18px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="limb" aria-hidden="true"></div>
+  <div class="hero">
+    <nav><span>星砚航天</span><a href="#">任务档案</a></nav>
+    <div class="center">
+      <span class="eyebrow">10 月 18 日 02:14 UTC</span>
+      <h1>十二颗星，<br><em>同一道晨光</em></h1>
+      <p class="lede">XY-07 雁阵把 12 颗遥感卫星送进 550 公里的晨昏轨道。它们会永远沿着昼夜分界线飞行，每天拍下同一时刻的地球。</p>
+      <div class="cta">
+        <a class="o-btn o-btn--primary" href="#">观看直播</a>
+        <a class="o-btn" href="#">发射前 10 分钟提醒我</a>
+      </div>
+    </div>
+    <div class="meta">
+      <span>距点火<b>01:42:17</b></span>
+      <span>轨道高度<b>550 km</b></span>
+      <span>载荷<b>12 颗</b></span>
+    </div>
+  </div>
+<script>
+  // 两层视差星点，静止不闪；只有一颗“信号星”呼吸
+  const c = document.getElementById("sky"), x = c.getContext("2d");
+  let stars = [];
+  function seed() {
+    const d = devicePixelRatio || 1;
+    c.width = innerWidth * d; c.height = innerHeight * d; x.setTransform(d, 0, 0, d, 0, 0);
+    const n = Math.round(innerWidth * innerHeight / 8000);
+    let s = 7;
+    const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    stars = Array.from({ length: n }, () => ({ x: r() * innerWidth, y: r() * innerHeight, z: r() < .8 ? .4 : 1, a: .3 + r() * .6 }));
+  }
+  function draw(t) {
+    x.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of stars) {
+      x.globalAlpha = p.a;
+      x.fillStyle = "#e8e6ff";
+      x.fillRect((p.x + t * .004 * p.z) % innerWidth, p.y, p.z, p.z);
+    }
+    x.globalAlpha = .6 + Math.sin(t / 900) * .4;
+    x.fillStyle = "#a98bff";
+    x.beginPath(); x.arc(innerWidth * .72, innerHeight * .22, 1.6, 0, 7); x.fill();
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) requestAnimationFrame(draw);
+  }
+  addEventListener("resize", seed); seed(); requestAnimationFrame(draw);
+</script>
+</body>
+</html>
