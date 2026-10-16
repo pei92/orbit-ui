@@ -50,13 +50,11 @@ orbit-ui/
 │  └─ style-explorer.html       对比页模板
 ├─ scripts/
 │  ├─ build_explorer.py         manifest → 离线单文件对比页（Python 标准库）
-│  ├─ shoot.mjs                 无依赖截图（调用本机 Chrome / Edge 无头模式）
-│  └─ build_site.py             website/ + examples/ → dist/
+│  └─ shoot.mjs                 无依赖截图（调用本机 Chrome / Edge 无头模式）
 ├─ examples/
 │  ├─ components.html           控件总览，可切换四套色板（?orbit=frontier 直接打开）
 │  ├─ launch-page/              一轮完整示例：四个方向首屏 + manifest + 生成的对比页
 │  └─ scenarios/                日常业务：外卖追踪、智能家居、钱包、商品详情、跑步记录、门店看板（index.html 总览）
-├─ website/                    介绍网站源码：index / showcase / docs
 └─ tests/
 ```
 
@@ -74,20 +72,6 @@ node scripts/shoot.mjs examples/components.html --size both
 
 ```bash
 python -m unittest discover tests
-```
-
-## 网站
-
-`website/` 是用这套风格做的介绍网站源码：介绍、案例、使用指南三页。生成到 `dist/`（已在 .gitignore 里）：
-
-```bash
-python scripts/build_site.py
-```
-
-本地预览（案例页里的实时预览需要通过 HTTP 打开，直接双击 HTML 时部分浏览器会拦截 iframe）：
-
-```bash
-python -m http.server 4173 --directory dist
 ```
 
 ## 致谢
