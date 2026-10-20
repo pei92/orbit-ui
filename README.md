@@ -73,9 +73,11 @@ orbit-ui/
 │  └─ tools.md                  工具用法
 ├─ assets/
 │  ├─ orbit.css                 设计令牌 + 控件 + 线条与动效原语（mission / blueprint / deepfield / frontier 四套色板）
+│  ├─ icons/                    46 个线性图标源文件（星体与航天 + 日常业务），构建进 orbit.css
 │  └─ style-explorer.html       对比页模板
 ├─ scripts/
 │  ├─ build_explorer.py         manifest → 离线单文件对比页（Python 标准库）
+│  ├─ build_icons.py            assets/icons → orbit.css 的 .o-icon--名字 类
 │  └─ shoot.mjs                 无依赖截图（调用本机 Chrome / Edge 无头模式）
 ├─ examples/
 │  ├─ components.html           控件总览，可切换四套色板（?orbit=frontier 直接打开）

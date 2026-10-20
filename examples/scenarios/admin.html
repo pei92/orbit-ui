@@ -56,6 +56,8 @@
   .chart g rect:nth-child(6) { animation-delay: .46s; }
   .chart rect.now { animation: grow .8s var(--o-ease) .52s both, o-blink 2.4s ease-in-out 1.4s infinite; }
   @keyframes grow { from { transform: scaleY(0); } }
+  aside .o-list button { justify-content: flex-start; }
+  aside .o-list button span { flex: 1; }
 </style>
 </head>
 <body>
@@ -63,12 +65,12 @@
   <aside>
     <div class="logo">山岚咖啡<small>华东区 · 运营中台</small></div>
     <ul class="o-list">
-      <li><button aria-current="true">实时看板</button></li>
-      <li><button>门店</button></li>
-      <li><button>商品与库存</button></li>
-      <li><button>会员</button></li>
-      <li><button>营销活动</button></li>
-      <li><button>报表导出</button></li>
+      <li><button aria-current="true"><span class="o-icon o-icon--radar" aria-hidden="true"></span><span>实时看板</span></button></li>
+      <li><button><span class="o-icon o-icon--pin" aria-hidden="true"></span><span>门店</span></button></li>
+      <li><button><span class="o-icon o-icon--cargo" aria-hidden="true"></span><span>商品与库存</span></button></li>
+      <li><button><span class="o-icon o-icon--user" aria-hidden="true"></span><span>会员</span></button></li>
+      <li><button><span class="o-icon o-icon--rocket" aria-hidden="true"></span><span>营销活动</span></button></li>
+      <li><button><span class="o-icon o-icon--chart" aria-hidden="true"></span><span>报表导出</span></button></li>
     </ul>
   </aside>
 
@@ -77,7 +79,7 @@
       <div><h1>今日实时看板</h1><small>10 月 16 日 周四 · 数据更新于 <span id="upd">14:32:08</span></small></div>
       <div class="tools">
         <select aria-label="区域"><option>华东区（42 家）</option><option>上海（19 家）</option><option>杭州（14 家）</option></select>
-        <button class="o-btn">导出今日报表</button>
+        <button class="o-btn"><span class="o-icon o-icon--arrow" aria-hidden="true"></span>导出今日报表</button>
       </div>
     </div>
 

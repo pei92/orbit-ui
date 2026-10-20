@@ -24,6 +24,13 @@
   .wide { grid-column: 1 / -1; }
   svg.spark { width: 100%; height: 80px; display: block; }
   .t { font: 700 56px/1 var(--o-font-mono); font-variant-numeric: tabular-nums; color: var(--o-accent); text-shadow: var(--o-glow); }
+  .icons { display: grid; gap: 14px; }
+  .icons h3 { margin: 4px 0 0; font: 500 13px/1 var(--o-font-body); color: var(--o-text-dim); }
+  .icons ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+  .icons li { display: grid; justify-items: center; gap: 8px; padding: 14px 4px 10px; border: 1px solid transparent; }
+  .icons li:hover { border-color: var(--o-line); color: var(--o-accent); }
+  .icons li .o-icon { --o-icon-size: 24px; }
+  .icons code { font: 400 12px/1 var(--o-font-mono); color: var(--o-text-dim); }
 </style>
 </head>
 <body class="o-grid-bg">
@@ -143,6 +150,70 @@
     <section class="o-panel o-boot o-brackets" style="--i:7">
       <h2>锁定区域（四角定位标）</h2>
       <p style="margin:0">SAT-07-04 已锁定 · 方位 214.6° · 仰角 38.2°</p>
+    </section>
+
+    <section class="o-panel o-boot wide" style="--i:8">
+      <h2>图标 · <code>.o-icon .o-icon--名字</code></h2>
+      <div class="icons">
+        <h3>星体与航天</h3>
+        <ul>
+          <li><span class="o-icon o-icon--planet" aria-hidden="true"></span><code>planet</code></li>
+          <li><span class="o-icon o-icon--orbit" aria-hidden="true"></span><code>orbit</code></li>
+          <li><span class="o-icon o-icon--satellite" aria-hidden="true"></span><code>satellite</code></li>
+          <li><span class="o-icon o-icon--rocket" aria-hidden="true"></span><code>rocket</code></li>
+          <li><span class="o-icon o-icon--star" aria-hidden="true"></span><code>star</code></li>
+          <li><span class="o-icon o-icon--moon" aria-hidden="true"></span><code>moon</code></li>
+          <li><span class="o-icon o-icon--sun" aria-hidden="true"></span><code>sun</code></li>
+          <li><span class="o-icon o-icon--comet" aria-hidden="true"></span><code>comet</code></li>
+          <li><span class="o-icon o-icon--constellation" aria-hidden="true"></span><code>constellation</code></li>
+          <li><span class="o-icon o-icon--telescope" aria-hidden="true"></span><code>telescope</code></li>
+          <li><span class="o-icon o-icon--antenna" aria-hidden="true"></span><code>antenna</code></li>
+          <li><span class="o-icon o-icon--signal" aria-hidden="true"></span><code>signal</code></li>
+          <li><span class="o-icon o-icon--radar" aria-hidden="true"></span><code>radar</code></li>
+          <li><span class="o-icon o-icon--reticle" aria-hidden="true"></span><code>reticle</code></li>
+          <li><span class="o-icon o-icon--globe" aria-hidden="true"></span><code>globe</code></li>
+          <li><span class="o-icon o-icon--countdown" aria-hidden="true"></span><code>countdown</code></li>
+          <li><span class="o-icon o-icon--astronaut" aria-hidden="true"></span><code>astronaut</code></li>
+          <li><span class="o-icon o-icon--habitat" aria-hidden="true"></span><code>habitat</code></li>
+        </ul>
+        <h3>日常业务</h3>
+        <ul>
+          <li><span class="o-icon o-icon--search" aria-hidden="true"></span><code>search</code></li>
+          <li><span class="o-icon o-icon--sliders" aria-hidden="true"></span><code>sliders</code></li>
+          <li><span class="o-icon o-icon--power" aria-hidden="true"></span><code>power</code></li>
+          <li><span class="o-icon o-icon--bolt" aria-hidden="true"></span><code>bolt</code></li>
+          <li><span class="o-icon o-icon--lock" aria-hidden="true"></span><code>lock</code></li>
+          <li><span class="o-icon o-icon--shield" aria-hidden="true"></span><code>shield</code></li>
+          <li><span class="o-icon o-icon--alert" aria-hidden="true"></span><code>alert</code></li>
+          <li><span class="o-icon o-icon--cargo" aria-hidden="true"></span><code>cargo</code></li>
+          <li><span class="o-icon o-icon--pin" aria-hidden="true"></span><code>pin</code></li>
+          <li><span class="o-icon o-icon--route" aria-hidden="true"></span><code>route</code></li>
+          <li><span class="o-icon o-icon--pulse" aria-hidden="true"></span><code>pulse</code></li>
+          <li><span class="o-icon o-icon--thermo" aria-hidden="true"></span><code>thermo</code></li>
+          <li><span class="o-icon o-icon--droplet" aria-hidden="true"></span><code>droplet</code></li>
+          <li><span class="o-icon o-icon--lamp" aria-hidden="true"></span><code>lamp</code></li>
+          <li><span class="o-icon o-icon--chart" aria-hidden="true"></span><code>chart</code></li>
+          <li><span class="o-icon o-icon--card" aria-hidden="true"></span><code>card</code></li>
+          <li><span class="o-icon o-icon--transfer" aria-hidden="true"></span><code>transfer</code></li>
+          <li><span class="o-icon o-icon--qr" aria-hidden="true"></span><code>qr</code></li>
+          <li><span class="o-icon o-icon--clock" aria-hidden="true"></span><code>clock</code></li>
+          <li><span class="o-icon o-icon--bell" aria-hidden="true"></span><code>bell</code></li>
+          <li><span class="o-icon o-icon--user" aria-hidden="true"></span><code>user</code></li>
+          <li><span class="o-icon o-icon--home" aria-hidden="true"></span><code>home</code></li>
+          <li><span class="o-icon o-icon--check" aria-hidden="true"></span><code>check</code></li>
+          <li><span class="o-icon o-icon--close" aria-hidden="true"></span><code>close</code></li>
+          <li><span class="o-icon o-icon--plus" aria-hidden="true"></span><code>plus</code></li>
+          <li><span class="o-icon o-icon--minus" aria-hidden="true"></span><code>minus</code></li>
+          <li><span class="o-icon o-icon--arrow" aria-hidden="true"></span><code>arrow</code></li>
+          <li><span class="o-icon o-icon--chevron" aria-hidden="true"></span><code>chevron</code></li>
+        </ul>
+        <div class="row">
+          <button class="o-btn o-btn--primary"><span class="o-icon o-icon--rocket" aria-hidden="true"></span>发射</button>
+          <button class="o-btn"><span class="o-icon o-icon--signal" aria-hidden="true"></span>建立链路</button>
+          <span class="o-avatar"><span class="o-icon o-icon--satellite" aria-hidden="true"></span></span>
+          <span class="o-avatar"><span class="o-icon o-icon--cargo" aria-hidden="true"></span></span>
+        </div>
+      </div>
     </section>
   </div>
 </div>

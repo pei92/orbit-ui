@@ -17,6 +17,8 @@
   .brand small { color: var(--o-text-dim); font-size: 13px; }
   .scenes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .scenes .o-btn { justify-content: center; padding: 0 8px; }
+  .climate dt .o-icon { --o-icon-size: 16px; }
+  .scenes .o-btn { gap: 6px; }
   .label { font: 600 13px/1 var(--o-font-body); color: var(--o-text-dim); padding: 0 8px 10px; }
 
   main { padding: 28px clamp(16px, 3vw, 40px) 40px; display: grid; gap: 20px; align-content: start; }
@@ -92,10 +94,10 @@
     <div class="scenes-block">
       <div class="label">场景</div>
       <div class="scenes">
-        <button class="o-btn">回家</button>
-        <button class="o-btn">离家</button>
-        <button class="o-btn">观影</button>
-        <button class="o-btn">睡眠</button>
+        <button class="o-btn"><span class="o-icon o-icon--habitat" aria-hidden="true"></span>回家</button>
+        <button class="o-btn"><span class="o-icon o-icon--lock" aria-hidden="true"></span>离家</button>
+        <button class="o-btn"><span class="o-icon o-icon--star" aria-hidden="true"></span>观影</button>
+        <button class="o-btn"><span class="o-icon o-icon--moon" aria-hidden="true"></span>睡眠</button>
       </div>
     </div>
   </nav>
@@ -115,9 +117,9 @@
           <div class="temp"><b>24.5°</b><span>目标 <span id="target">25</span>°</span></div>
         </div>
         <dl>
-          <div><dt>空调</dt><dd>制冷 · 自动风</dd></div>
-          <div><dt>湿度</dt><dd>48%</dd></div>
-          <div><dt>PM2.5</dt><dd>12 μg/m³</dd></div>
+          <div><dt><span class="o-icon o-icon--thermo" aria-hidden="true"></span> 空调</dt><dd>制冷 · 自动风</dd></div>
+          <div><dt><span class="o-icon o-icon--droplet" aria-hidden="true"></span> 湿度</dt><dd>48%</dd></div>
+          <div><dt><span class="o-icon o-icon--sun" aria-hidden="true"></span> PM2.5</dt><dd>12 μg/m³</dd></div>
           <div class="stepper" role="group" aria-label="调节目标温度">
             <button class="o-btn" aria-label="调低 0.5 度">−</button>
             <button class="o-btn" aria-label="调高 0.5 度">＋</button>
@@ -127,11 +129,11 @@
 
       <section class="o-panel devices">
         <h2><span>设备</span><span>7 台</span></h2>
-        <div class="dev"><div><b>主灯</b><small>暖白 3000K · 亮度 80%</small></div><input type="checkbox" class="o-switch" checked aria-label="主灯"></div>
-        <div class="dev"><div><b>电视背景灯带</b><small>亮度 35%</small></div><input type="checkbox" class="o-switch" checked aria-label="电视背景灯带"></div>
-        <div class="dev"><div><b>落地灯</b><small>亮度 60%</small></div><input type="checkbox" class="o-switch" checked aria-label="落地灯"></div>
-        <div class="dev"><div><b>电动窗帘</b><small>开合 0%</small></div><input type="checkbox" class="o-switch" aria-label="电动窗帘"></div>
-        <div class="dev"><div><b>扫地机器人</b><small>回充中 · 电量 64%</small></div><input type="checkbox" class="o-switch" aria-label="扫地机器人"></div>
+        <div class="dev"><span class="o-avatar"><span class="o-icon o-icon--lamp" aria-hidden="true"></span></span><div><b>主灯</b><small>暖白 3000K · 亮度 80%</small></div><input type="checkbox" class="o-switch" checked aria-label="主灯"></div>
+        <div class="dev"><span class="o-avatar"><span class="o-icon o-icon--bolt" aria-hidden="true"></span></span><div><b>电视背景灯带</b><small>亮度 35%</small></div><input type="checkbox" class="o-switch" checked aria-label="电视背景灯带"></div>
+        <div class="dev"><span class="o-avatar"><span class="o-icon o-icon--lamp" aria-hidden="true"></span></span><div><b>落地灯</b><small>亮度 60%</small></div><input type="checkbox" class="o-switch" checked aria-label="落地灯"></div>
+        <div class="dev"><span class="o-avatar"><span class="o-icon o-icon--sliders" aria-hidden="true"></span></span><div><b>电动窗帘</b><small>开合 0%</small></div><input type="checkbox" class="o-switch" aria-label="电动窗帘"></div>
+        <div class="dev"><span class="o-avatar"><span class="o-icon o-icon--orbit" aria-hidden="true"></span></span><div><b>扫地机器人</b><small>回充中 · 电量 64%</small></div><input type="checkbox" class="o-switch" aria-label="扫地机器人"></div>
       </section>
 
       <section class="o-panel energy">

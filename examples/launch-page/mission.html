@@ -26,6 +26,8 @@
   .row b { font: 500 20px/1.2 var(--o-font-mono); font-variant-numeric: tabular-nums; }
   .row b small { font-size: 13px; color: var(--o-text-dim); margin-left: 4px; font-weight: 400; }
   .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .checks .chk { display: inline-flex; align-items: center; gap: 8px; }
+  .checks .chk .o-icon { --o-icon-size: 16px; color: var(--o-text-dim); }
   .checks li { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--o-line); font-size: 14px; }
   .t .o-tick.is-tick { animation-duration: 900ms; }
   .foot { display: flex; justify-content: space-between; gap: 16px; padding: 12px 28px; border-top: 1px solid var(--o-line); font: 400 13px/1.4 var(--o-font-mono); color: var(--o-text-dim); }
@@ -59,18 +61,18 @@
       <h1>12 颗遥感卫星，一次送入晨昏轨道</h1>
       <p class="lede">发射窗口 10 月 18 日 02:14 UTC，持续 11 分钟。直播从 T−30 分钟开始，全程播放箭上相机与遥测。</p>
       <div class="cta">
-        <a class="o-btn o-btn--primary" href="#">观看直播</a>
-        <a class="o-btn" href="#">发射前 10 分钟提醒我</a>
+        <a class="o-btn o-btn--primary" href="#"><span class="o-icon o-icon--signal" aria-hidden="true"></span>观看直播</a>
+        <a class="o-btn" href="#"><span class="o-icon o-icon--countdown" aria-hidden="true"></span>发射前 10 分钟提醒我</a>
       </div>
     </section>
 
     <section>
       <ul class="checks o-stagger">
-        <li>气象 · 高空风 <span class="o-status o-status--nominal">通过</span></li>
-        <li>靶场安全 <span class="o-status o-status--nominal">通过</span></li>
-        <li>一级液氧补加 <span class="o-status o-status--warn" id="lox">进行中</span></li>
-        <li>测控链路 <span class="o-status o-status--nominal">238 ms</span></li>
-        <li>回收船就位 <span class="o-status o-status--nominal">东经 121.4°</span></li>
+        <li><span class="chk"><span class="o-icon o-icon--sun" aria-hidden="true"></span>气象 · 高空风</span><span class="o-status o-status--nominal">通过</span></li>
+        <li><span class="chk"><span class="o-icon o-icon--shield" aria-hidden="true"></span>靶场安全</span><span class="o-status o-status--nominal">通过</span></li>
+        <li><span class="chk"><span class="o-icon o-icon--droplet" aria-hidden="true"></span>一级液氧补加</span><span class="o-status o-status--warn" id="lox">进行中</span></li>
+        <li><span class="chk"><span class="o-icon o-icon--antenna" aria-hidden="true"></span>测控链路</span><span class="o-status o-status--nominal">238 ms</span></li>
+        <li><span class="chk"><span class="o-icon o-icon--pin" aria-hidden="true"></span>回收船就位</span><span class="o-status o-status--nominal">东经 121.4°</span></li>
       </ul>
     </section>
   </main>

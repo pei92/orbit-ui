@@ -51,7 +51,7 @@ metadata:
 | 星图、行星贴图、NASA / ESA 公共素材、3D 地球 | [素材](references/media.md) |
 | 非太空的日常业务界面 | [日常业务场景](references/business-scenarios.md) |
 
-设计令牌和控件样式先用 [`assets/orbit.css`](assets/orbit.css)：复制到任务目录，用 `data-orbit` 选择 mission / blueprint / deepfield / frontier 四套色板之一，再按方向改变量，不另造一套设计系统。存量项目沿用项目自己的变量和组件，只借用这里的规则。
+设计令牌、控件样式和图标先用 [`assets/orbit.css`](assets/orbit.css)（图标是 `.o-icon--planet` 这类类名，见视觉语言的“图标”一节）：复制到任务目录，用 `data-orbit` 选择 mission / blueprint / deepfield / frontier 四套色板之一，再按方向改变量，不另造一套设计系统。存量项目沿用项目自己的变量和组件，只借用这里的规则。
 
 ## 3. 制作并取得实际证据
 

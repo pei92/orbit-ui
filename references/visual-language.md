@@ -84,8 +84,19 @@
 
 ## 图标
 
-- 工业仪器感：Carbon、Material Symbols Sharp、Tabler（1.5px），直角端点。
-- 一个产品只用一套。能用字符就用字符：→ ↑ ▲ ● ◆ ⏵、编号。
+先用 [`assets/orbit.css`](../assets/orbit.css) 自带的图标：`<span class="o-icon o-icon--satellite" aria-hidden="true"></span>`。24 格、1.5px 线、直角端点，用 CSS mask 着色，跟随文字颜色，`--o-icon-size` 调尺寸（默认 20px，按钮和 `.o-avatar` 里 18px）。源文件在 [`assets/icons/`](../assets/icons/)，完整列表见 [`examples/components.html`](../examples/components.html)。
+
+| 组 | 图标 | 用在哪里 |
+| --- | --- | --- |
+| 星体与航天 | planet、orbit、satellite、rocket、star、moon、sun、comet、constellation、telescope、antenna、signal、radar、reticle、globe、countdown、astronaut、habitat | 品牌位、空状态、导航里“这是什么频道”、主动作（发射、建立链路、观看直播） |
+| 日常业务 | search、sliders、power、bolt、lock、shield、alert、cargo、pin、route、pulse、thermo、droplet、lamp、chart、card、transfer、qr、clock、bell、user、home、check、close、plus、minus、arrow、chevron | 控件、列表行首、指标标签 |
+
+- 日常业务里星体图标是**翻译**，不是贴纸：回家 = habitat（舱段），扫地机器人 = orbit，营销活动 = rocket，联系骑手 = signal。每一处都说得出为什么；说不出就用日常组。
+- 图标只负责“认得出是什么”：不加发光、不加彩色底、不做旋转动画。颜色跟文字走，选中态跟着反白。
+- 图标旁边永远有文字或 `aria-label`；纯图标按钮必须有 `aria-label`。
+- 列表、设备卡片的行首图标放进 `.o-avatar` 圆框里，和首字头像同一种位置。
+- 不够用时补到 `assets/icons/`（同样 24 格、1.5px、`stroke="currentColor"`），运行 `python scripts/build_icons.py` 写回 `orbit.css`。实在要借外部图标库，选同样线宽、直角端点的 Carbon、Material Symbols Sharp、Tabler，一个产品只用一套。
+- 能用字符就用字符：→ ↑ ▲ ● ◆ ⏵、编号。
 - 不用表情符号（🚀🛰️）当界面图标。
 
 ## 可读性是交付门槛

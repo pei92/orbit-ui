@@ -32,10 +32,19 @@
 | `.o-table`（数字列加 `.num`） | 表格 |
 | `.o-track`（`data-state`） | 订单 / 物流 / 审批步骤轨迹 |
 | `.o-avatar` | 头像、首字图标位 |
+| `.o-icon .o-icon--<名字>`（`--o-icon-size`） | 线性图标：星体与航天 18 个、日常业务 28 个，名字见 [视觉语言 · 图标](visual-language.md#图标) |
 
 控件自带的动效不需要额外类：按钮悬停扫光、按下下沉；刻度条、刻度环从 0 读到目标值（改 `--v` 也会过渡）；状态灯呼吸；进行中的步骤向外发信号；开关落定带轻微回弹。`prefers-reduced-motion` 下全部关闭。
 
 组件总览页：[`examples/components.html`](../examples/components.html)。
+
+## 图标：`scripts/build_icons.py`
+
+```text
+python <skill>/scripts/build_icons.py [--css 任务目录/orbit.css] [--icons 图标目录]
+```
+
+把 `assets/icons/*.svg` 写进 `orbit.css` 的图标段（`@icons:start` 到 `@icons:end` 之间），每个文件生成一个 `.o-icon--<文件名>`。只在新增或修改图标时运行。
 
 ## 风格对比页
 

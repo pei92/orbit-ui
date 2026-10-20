@@ -46,6 +46,7 @@
   @keyframes fade-in { from { opacity: 0; } }
   .marks { animation: fade-in .6s ease 1.6s both; }
   .hr svg { animation: o-wipe 1.8s var(--o-ease) .3s both; }
+  .kpis .o-label .o-icon { --o-icon-size: 15px; }
 </style>
 </head>
 <body class="o-grid-bg">
@@ -56,10 +57,10 @@
   </header>
 
   <div class="kpis o-stagger">
-    <div><span class="o-label">距离</span><div class="big"><span id="dist">10.24</span><small>km</small></div></div>
-    <div><span class="o-label">用时</span><b>53:18</b></div>
-    <div><span class="o-label">平均配速</span><b>5'12"<small>/km</small></b></div>
-    <div><span class="o-label">平均心率</span><b>152<small>bpm</small></b></div>
+    <div><span class="o-label"><span class="o-icon o-icon--route" aria-hidden="true"></span> 距离</span><div class="big"><span id="dist">10.24</span><small>km</small></div></div>
+    <div><span class="o-label"><span class="o-icon o-icon--countdown" aria-hidden="true"></span> 用时</span><b>53:18</b></div>
+    <div><span class="o-label"><span class="o-icon o-icon--bolt" aria-hidden="true"></span> 平均配速</span><b>5'12"<small>/km</small></b></div>
+    <div><span class="o-label"><span class="o-icon o-icon--pulse" aria-hidden="true"></span> 平均心率</span><b>152<small>bpm</small></b></div>
   </div>
 
   <div class="main">
